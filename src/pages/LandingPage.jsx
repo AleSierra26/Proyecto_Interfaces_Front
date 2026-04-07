@@ -15,10 +15,10 @@ export default function LandingPage() {
                     El futuro de salir está aquí.
                 </p>
                 <h2 className="mt-14 text-5xl font-black tracking-tighter text-primary mb-8">ASEGURA TU PUESTO.</h2>
-                <button className='w-[80%] py-3 border border-primary text-primary-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:bg-primary-foreground hover:text-primary transition-colors'>
+                <button className='w-[80%] py-3 border border-primary text-primary-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:opacity-90 transition-colors'>
                     Crear cuenta
                 </button>
-                <button className='w-[80%] mt-4 py-3 border border-[#e2e2e2] text-primary font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] bg-[#e2e2e2] hover:bg-primary-foreground hover:text-primary hover:border-primary transition-colors'>
+                <button className='w-[80%] mt-4 py-3 border border-border text-muted-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] hover:bg-primary-foreground hover:text-primary hover:border-primary transition-colors'>
                     Iniciar Sesión
                 </button>
             </div>

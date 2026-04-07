@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage'
 import LandingPage from './pages/LandingPage';
+import CreateEventPage from './pages/CreateEventPage';
+import MyEvents from './pages/MyEvents';
 import './App.css'
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
@@ -20,6 +22,8 @@ export default function App() {
         <Route path='/' element={<LandingPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/create-event" element={<CreateEventPage />} />
+        <Route path="/my-events" element={<MyEvents />} />
       </Routes>
 
       <BottomNav />

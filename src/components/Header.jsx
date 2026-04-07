@@ -1,5 +1,4 @@
 import { Menu, Search, User } from 'lucide-react'
-import { Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import QuorumLogo from '../assets/QuorumLogo.png';
 
