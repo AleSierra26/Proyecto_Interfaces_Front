@@ -117,19 +117,6 @@ export default function CreateEventPage() {
                             placeholder="Describe tu evento en pocas palabras..."
                         />
                     </div>
- 
-                    <div>
-                        <FieldLabel>Categoría</FieldLabel>
-                        <SelectField icon={Tag} name="category" value={form.category} onChange={handleChange} required>
-                            <option value="" disabled>Seleccionar categoría</option>
-                            <option value="music">Música</option>
-                            <option value="sports">Deportes</option>
-                            <option value="theater">Teatro</option>
-                            <option value="art">Arte</option>
-                            <option value="food">Gastronomía</option>
-                            <option value="other">Otro</option>
-                        </SelectField>
-                    </div>
                 </div>
  
                 <div className="border-t border-border mb-6" />

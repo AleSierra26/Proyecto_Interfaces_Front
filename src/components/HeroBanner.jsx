@@ -3,7 +3,7 @@ export default function HeroBanner() {
         <section className="mx-4 mt-4 rounded-sm overflow-hidden bg-white">
             <div className="flex flex-col items-center justify-center text-center px-6">
                 <h2 className="font-sans-serif font-bold text-2xl md:text-3xl text-primary leading-tight tracking-zen">
-                    Ingresa un código de evento abajo
+                    Ingresa un código de evento
                 </h2>
                 <p className="mt-2 text-sm text-primary font-sans-serif max-w-xs">
                     O busca un evento por su nombre, fecha o categoría

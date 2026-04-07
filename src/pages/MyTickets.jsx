@@ -8,16 +8,6 @@ export default function MyEvents() {
     return (
         <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20">
 
-            {/* Manage events section */}
-            <section className="flex flex-col items-center px-4 py-5 border-b border-border">
-
-                <div className="flex flex-row gap-3 my-3 w-[50%]">
-                    <button onClick={() => navigate('/create-event')} className='w-[100%] py-3 border border-primary text-primary-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:opacity-90 transition-colors'>
-                        Crear evento
-                    </button>
-                </div>
-            </section>
-
             {/* My Tickets section */}
             <section className="mt-8 px-4">
                 {/* Section header — matches TrendingEvents.jsx */}

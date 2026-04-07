@@ -1,6 +1,10 @@
 import { ShieldCheck, Gauge } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
+
+    const navigate = useNavigate();
+
     return (
         <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20">
             <section className="mx-4 mt-4 rounded-sm overflow-hidden bg-white">
@@ -18,7 +22,7 @@ export default function LandingPage() {
                 <button className='w-[80%] py-3 border border-primary text-primary-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:opacity-90 transition-colors'>
                     Crear cuenta
                 </button>
-                <button className='w-[80%] mt-4 py-3 border border-border text-muted-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] hover:bg-primary-foreground hover:text-primary hover:border-primary transition-colors'>
+                <button onClick={() => navigate('/home')} className='w-[80%] mt-4 py-3 border border-border text-muted-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] hover:bg-primary-foreground hover:text-primary hover:border-primary transition-colors'>
                     Iniciar Sesión
                 </button>
             </div>
