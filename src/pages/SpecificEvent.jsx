@@ -4,21 +4,20 @@ import { useNavigate } from 'react-router-dom';
  
 // Datos de ejemplo, en un caso real vendrían de una API
 const event = {
-    title: 'Festival de Jazz en Vivo',
+    title: 'Masivo Casa Dimitri',
     code: '123456',
-    category: 'Música',
     date: 'Sábado, 25 de Octubre 2025',
     time: '20:00 hrs',
     venue: 'Auditorio Nacional',
-    address: 'Paseo de la Reforma 50, Ciudad de México',
+    address: 'Paseo de la Reforma 50, Santiago, Chile',
     price: 45000,
     totalCapacity: 200,
     soldTickets: 173,
     description:
-        'Una noche inolvidable con los mejores artistas de jazz del continente. Disfruta de sets en vivo, gastronomía de autor y un ambiente único bajo las estrellas. El festival reúne a músicos locales e internacionales en una celebración de la improvisación y el ritmo.',
+        'Vengan a tener una noche genial, con la mejor música y piscina. No se lo pueden perder, va a ser épico.',
     organizer: {
-        name: 'Cultura Viva MX',
-        memberSince: 'Mar 2022',
+        name: 'Dimitri Vegas',
+        memberSince: 'Mar 2026',
         eventsHosted: 34,
     },
 };

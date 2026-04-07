@@ -54,7 +54,8 @@ export default function SearchBar() {
                         <div className="space-y-3 pt-2">
                             <button
                                 onClick={() => navigate(`/event/${code}`)} // Cambiar a la ruta real del evento
-                                className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                                disabled={code.trim() === ''}
+                                className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Buscar evento
                             </button>

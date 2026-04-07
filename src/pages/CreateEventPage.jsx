@@ -212,16 +212,16 @@ export default function CreateEventPage() {
  
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <FieldLabel>Precio (USD)</FieldLabel>
+                            <FieldLabel>Precio (CLP)</FieldLabel>
                             <InputField
                                 icon={DollarSign}
                                 type="number"
                                 name="price"
                                 value={form.price}
                                 onChange={handleChange}
-                                placeholder="0.00"
+                                placeholder="0"
                                 min="0"
-                                step="0.01"
+                                step="50"
                                 disabled={form.priceLabel === 'free'}
                             />
                         </div>

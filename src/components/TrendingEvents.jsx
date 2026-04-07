@@ -1,28 +1,25 @@
 const events = [
   {
         id: 1,
-        title: 'Concierto de Rock',
+        title: 'Buinazo PUC',
         date: 'OCT 25 - Sábado',
-        price: '$45',
-        priceLabel: 'Desde',
+        price: '$150000',
         venue: 'Auditorio Nacional',
         //image: 'https://source.unsplash.com/random/400x300?concert'
     },
     {
         id: 2,
-        title: 'Festival de Jazz',
+        title: 'Torneo Fortnite',
         date: 'OCT 25 - Sábado',
-        price: '$45',
-        priceLabel: 'Desde',
+        price: '$1000',
         venue: 'Parque Central',
         //image: 'https://source.unsplash.com/random/400x300?jazz'
     },
     {
         id: 3,
-        title: 'Obra de Teatro',
+        title: 'Cumpleaños de Pablo',
         date: 'OCT 25 - Sábado',
-        price: '$45',
-        priceLabel: 'Desde',
+        price: '$4500',
         venue: 'Teatro Principal',
         //image: 'https://source.unsplash.com/random/400x300?theater'
     }
@@ -57,23 +54,27 @@ export default function TrendingEvents() {
                                 Imagen Aquí!
                             </span>
                         </div>
-
-                        {event.tag && (
-                            <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[9px] uppercase tracking-widest font-sans font-medium px-2.5 py-1 rounded-sm">
-                                {event.tag}
-                            </span>
-                        )}
                     </div>
 
                     {/* Event info */}
-                    <div className="mt-2.5 pb-4">
-                        <h4 className="font-sans-serif font-bold text-base tracking-zen group-hover:text-accent transition-colors">
-                            {event.title}
-                        </h4>
-                        <p className="text-xs text-muted-foreground font-sans mt-0.5">
-                            {event.venue}
-                            {event.date ? `- ${event.date}` : ''}
-                        </p>
+                    <div className="flex items-start justify-between pt-4 pb-6 cursor-pointer group">
+                        <div className="flex-1 pr-4">
+                            <h4 className="font-sans font-bold text-base tracking-zen group-hover:text-accent transition-colors">
+                                {event.title}
+                            </h4>
+                            <p className="text-xs text-muted-foreground font-sans mt-0.5">
+                                {event.venue}
+                                {event.date ? `- ${event.date}` : ''}
+                            </p>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                            <span className='font-sans font-bold text-base'>
+                                {event.price}
+                            </span>
+                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                CLP
+                            </p>
+                        </div>
                     </div>
                 </div>
             ))}
