@@ -1,5 +1,5 @@
 # Proyecto curso Interfaces y Experiencia de Usuario:
-# <img src="src/assets/quorumlogo.png" alt="QUORUM Logo" width="50"> QUORUM
+# <img src="/src/assets/logo_readme.png" alt="QUORUM Logo" width="50"> QUORUM
 
 ## Cómo correr la aplicación:
 
