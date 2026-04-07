@@ -6,6 +6,7 @@ import LandingPage from './pages/LandingPage';
 import MyEvents from './pages/MyEvents';
 import CreateEventPage from './pages/CreateEventPage';
 import MyTickets from './pages/MyTickets';
+import SpecificEvent from './pages/SpecificEvent';
 import './App.css'
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
@@ -24,6 +25,7 @@ function AppContent() {
         <Route path="/my-events" element={<MyEvents />} />
         <Route path="/create-event" element={<CreateEventPage />} />
         <Route path="/my-tickets" element={<MyTickets />} />
+        <Route path="/event/:id" element={<SpecificEvent />} />
       </Routes>
 
       {location.pathname !== '/' && <BottomNav />}

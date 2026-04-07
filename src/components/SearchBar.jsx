@@ -1,9 +1,12 @@
 import { Search } from 'lucide-react'
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SearchBar() {
 
+    const navigate = useNavigate();
     const [showCodeInput, setShowCodeInput] = useState(false);
+    const [code, setCode] = useState('');
 
     const handleCodeClick = () => {
         setShowCodeInput(true);
@@ -43,12 +46,14 @@ export default function SearchBar() {
                             <input
                                 type='text'
                                 placeholder='Ingresa tu código aquí'
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
                                 className='flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans'
                                 />
                         </div>
                         <div className="space-y-3 pt-2">
                             <button
-                                type="submit"
+                                onClick={() => navigate(`/event/${code}`)} // Cambiar a la ruta real del evento
                                 className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                             >
                                 Buscar evento
