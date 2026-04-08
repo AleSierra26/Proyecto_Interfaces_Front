@@ -19,20 +19,20 @@ export default function LandingPage() {
                     El futuro de salir está aquí.
                 </p>
                 <h2 className="mt-14 text-5xl font-black tracking-tighter text-primary mb-8">ASEGURA TU PUESTO.</h2>
-                <button className='w-[80%] py-3 border border-primary text-primary-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:opacity-90 transition-colors'>
+                <button className='w-[80%] py-3 border border-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:opacity-90 transition-colors'>
                     Crear cuenta
                 </button>
-                <button onClick={() => navigate('/home')} className='w-[80%] mt-4 py-3 border border-border text-muted-foreground font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] hover:bg-primary-foreground hover:text-primary hover:border-primary transition-colors'>
+                <button onClick={() => navigate('/home')} className='w-[80%] mt-4 py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:bg-primary-foreground hover:text-primary hover:border-primary transition-colors'>
                     Iniciar Sesión
                 </button>
             </div>
-            <div className="my-10 flex flex-row items-start justify-left text-center px-6">
+            {/* <div className="my-10 flex flex-row items-start justify-left text-center px-6">
                 <ShieldCheck size={40} className="text-primary bg-[#e2e2e2] p-1 rounded-[5px]" />
                 <div className="flex flex-col items-left justify-left text-left px-2">
                     <h3 className="text-2xl font-bold mb-4 tracking-tight">Secure Resale</h3>
                     <p className="text-[#474747] font-light leading-relaxed">Safely sell your tickets to other fans through our proprietary verification protocol.</p>
                 </div>
-            </div>
+            </div> */}
             </section>
         </div>
     )

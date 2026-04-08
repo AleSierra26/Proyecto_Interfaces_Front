@@ -1,5 +1,6 @@
 import { Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const events = [
   {
@@ -31,13 +32,28 @@ const events = [
 export default function MyEvents() {
 
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+    const [showModal2, setShowModal2] = useState(false);
+
+    const handleModalOpen = () => {
+        setShowModal(true);
+    };
+    const handleModal2Open = () => {
+        setShowModal2(true);
+    };
 
     return (
-        <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20">
+        <>
+            {/* Blur overlay backdrop */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowModal(false)} />
+            )}
+            {showModal2 && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowModal2(false)} />
+            )}
 
-            <section className="mt-8 px-4">
-
-                <div className="flex items-end justify-between mb-4">
+            <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20">
+                <div className="flex items-end justify-between my-4">
                     <div>
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
                             Activos
@@ -54,9 +70,9 @@ export default function MyEvents() {
                 {/* Events cards */}
                 <div className="space-y-5">
                     {events.map((event) => (
-                        <div key={event.id} onClick={() => navigate('/event/123456')} className="group cursor-pointer">
+                        <div key={event.id} className="group cursor-pointer">
                             {/* Placeholder image for now */}
-                            <div className="relative w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-muted">
+                            <div onClick={() => navigate('/event/123456')} className="relative w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-muted">
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <span className="text-muted-foreground/50 text-sm font-sans">
                                         Imagen Aquí!
@@ -64,8 +80,15 @@ export default function MyEvents() {
                                 </div>
                             </div>
 
+                            <button onClick={handleModalOpen} className='w-full mt-3 mb-2 py-3 border border-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:opacity-90 transition-colors'>
+                                    📸 Mi QR
+                            </button>
+                            <button onClick={handleModal2Open} className='w-full py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:bg-primary-foreground hover:text-primary hover:border-primary transition-colors'>
+                                Revender Ticket
+                            </button>
+
                             {/* Event info */}
-                            <div className="flex items-start justify-between pt-4 pb-6 cursor-pointer group">
+                            <div onClick={() => navigate('/event/123456')} className="flex items-start justify-between pt-1 pb-6 cursor-pointer group">
                                 <div className="flex-1 pr-4">
                                     <h4 className="font-sans font-bold text-base tracking-zen group-hover:text-accent transition-colors">
                                         {event.title}
@@ -87,7 +110,29 @@ export default function MyEvents() {
                         </div>
                     ))}
                 </div>
-            </section>
-        </div>
+            </div>
+
+            {/* Work In Progress Modal */}
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+                    <div className="bg-card p-4 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm">
+                        <h2 className='text-[40px]'>⚠️</h2>
+                        <h2>
+                            ¡Estamos trabajando en esta funcionalidad! Pronto podrás mostros tu código QR del evento para verificar tu asistencia con el organizador.
+                        </h2>
+                    </div>
+                </div>
+            )}
+            {showModal2 && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+                    <div className="bg-card p-4 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm">
+                        <h2 className='text-[40px]'>⚠️</h2>
+                        <h2>
+                            ¡Estamos trabajando en esta funcionalidad! Pronto podrás revender tus tickets.
+                        </h2>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
