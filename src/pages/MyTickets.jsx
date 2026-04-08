@@ -54,7 +54,7 @@ export default function MyEvents() {
                 {/* Events cards */}
                 <div className="space-y-5">
                     {events.map((event) => (
-                        <div key={event.id} className="group cursor-pointer">
+                        <div key={event.id} onClick={() => navigate('/event/123456')} className="group cursor-pointer">
                             {/* Placeholder image for now */}
                             <div className="relative w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-muted">
                                 <div className="absolute inset-0 flex items-center justify-center">

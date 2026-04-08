@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
 
 const upcomingEvents = [
@@ -28,6 +29,9 @@ const upcomingEvents = [
 ];
 
 export default function UpcomingEvents() {
+    
+    const navigate = useNavigate();
+
     return (
         <section className="mt-10 px-4 pb-28">
             {/* Section header */}
@@ -47,6 +51,7 @@ export default function UpcomingEvents() {
             <div className='space-y-0 divide-y divide-border'>
                 {upcomingEvents.map((event) => (
                     <div key={event.id}
+                        onClick={() => navigate('/event/123456')}
                         className='flex items-start justify-between py-4 cursor-pointer group'
                         >
                         <div className='flex-1 pr-4'>
