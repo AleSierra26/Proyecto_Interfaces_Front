@@ -2,24 +2,34 @@ import { Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-const events = [
-  {
-        id: 1,
-        title: 'Ahoguemos las penas',
-        date: 'OCT 25 - Sábado',
-        price: '$GRATIS',
+const MOCK_EVENTS = {
+    '123456': {
+        title: 'Masivo Casa Dimitri',
+        code: '123456',
+        date: 'Sábado, 25 de Octubre 2025',
+        time: '20:00 hrs',
         venue: 'Auditorio Nacional',
-        //image: 'https://source.unsplash.com/random/400x300?concert'
+        address: 'Paseo de la Reforma 50, Santiago, Chile',
+        price: 45000,
+        totalCapacity: 200,
+        soldTickets: 173,
+        description: 'Vengan a tener una noche genial, con la mejor música y piscina. No se lo pueden perder, va a ser épico.',
+        organizer: { name: 'Dimitri Vegas', memberSince: 'Mar 2026', eventsHosted: 34 },
     },
-    {
-        id: 2,
+    '789012': {
         title: 'Torneo Fifa',
-        date: 'OCT 25 - Sábado',
-        price: '$1500',
+        code: '789012',
+        date: 'Sábado, 1 de Noviembre 2025',
+        time: '15:00 hrs',
         venue: 'Estación Central',
-        //image: 'https://source.unsplash.com/random/400x300?jazz'
+        address: 'Alameda 3322, Santiago, Chile',
+        price: 1500,
+        totalCapacity: 64,
+        soldTickets: 20,
+        description: 'El torneo de fútbol virtual más grande de Santiago. Inscríbete y demuestra que eres el mejor.',
+        organizer: { name: 'GameZone CL', memberSince: 'Ene 2025', eventsHosted: 8 },
     },
-];
+};
 
 export default function MyEvents() {
 
@@ -67,10 +77,10 @@ export default function MyEvents() {
 
                     {/* Events cards */}
                     <div className="space-y-5">
-                        {events.map((event) => (
-                            <div key={event.id} className="group cursor-pointer">
+                        {Object.values(MOCK_EVENTS).map((event) => (
+                            <div key={event.code} className="border border-border rounded-[10px] bg-card overflow-hidden">
                                 {/* Placeholder image for now */}
-                                <div onClick={() => navigate('/event/123456')} className="relative w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-muted">
+                                <div onClick={() => navigate(`/event/${event.code}`)} className="relative w-full aspect-[4/3] rounded-[10px] bg-muted cursor-pointer">
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <span className="text-muted-foreground/50 text-sm font-sans">
                                             Imagen Aquí!
@@ -78,30 +88,57 @@ export default function MyEvents() {
                                     </div>
                                 </div>
 
-                                <button onClick={handleModalOpen} className='w-full mt-3 py-3 border border-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:opacity-90 transition-colors'>
-                                    📸 Escanear Invitados
-                                </button>
+                                <div className="p-4">
+                                    {/* Title & price */}
+                                    <div
+                                        onClick={() => navigate(`/event/${event.code}`)}
+                                        className="flex items-start justify-between gap-4 cursor-pointer mb-4"
+                                    >
+                                        <div className="flex-1">
+                                            <h4 className="font-sans font-bold text-base tracking-widest">
+                                                {event.title}
+                                            </h4>
+                                            <p className="text-xs text-muted-foreground font-sans mt-0.5">
+                                                {event.venue}
+                                            </p>
+                                        </div>
+                                        <div className="text-right flex-shrink-0">
+                                            <p className="font-sans font-bold text-base">
+                                                ${event.price?.toLocaleString()}
+                                            </p>
+                                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                CLP
+                                            </p>
+                                        </div>
+                                    </div>
 
-                                {/* Event info */}
-                                <div onClick={() => navigate('/event/123456')} className="flex items-start justify-between pt-1 pb-6 cursor-pointer group">
-                                    <div className="flex-1 pr-4">
-                                        <h4 className="font-sans font-bold text-base tracking-zen group-hover:text-accent transition-colors">
-                                            {event.title}
-                                        </h4>
-                                        <p className="text-xs text-muted-foreground font-sans mt-0.5">
-                                            {event.venue}
-                                            {event.date ? `- ${event.date}` : ''}
-                                        </p>
+                                    {/* Date & time row */}
+                                    <div className="flex gap-6 border-t border-border pt-3 mb-4">
+                                        <div>
+                                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                Fecha
+                                            </p>
+                                            <p className="text-xs font-sans text-foreground mt-0.5">
+                                                {event.date}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                Hora
+                                            </p>
+                                            <p className="text-xs font-sans text-foreground mt-0.5">
+                                                {event.time}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="text-right flex-shrink-0">
-                                        <span className='font-sans font-bold text-base'>
-                                            {event.price}
-                                        </span>
-                                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                            CLP
-                                        </p>
-                                    </div>
+
+                                    <button onClick={() => navigate(`/scanner/${event.code}`)} className='w-full flex-1 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity'>
+                                        📸 Escanear Invitados
+                                    </button>
+                                    
                                 </div>
+
+
                             </div>
                         ))}
                     </div>

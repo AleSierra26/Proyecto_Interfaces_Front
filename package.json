@@ -12,11 +12,14 @@
   "dependencies": {
     "20": "^3.1.9",
     "@tailwindcss/aspect-ratio": "^0.4.2",
+    "html5-qrcode": "^2.3.8",
     "lucide-react": "^1.7.0",
+    "qrcode": "^1.5.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.14.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

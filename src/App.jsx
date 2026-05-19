@@ -7,6 +7,7 @@ import MyEvents from './pages/MyEvents';
 import CreateEventPage from './pages/CreateEventPage';
 import MyTickets from './pages/MyTickets';
 import SpecificEvent from './pages/SpecificEvent';
+import ScannerPage from './pages/ScannerPage';
 import './App.css'
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
@@ -25,7 +26,8 @@ function AppContent() {
         <Route path="/my-events" element={<MyEvents />} />
         <Route path="/create-event" element={<CreateEventPage />} />
         <Route path="/my-tickets" element={<MyTickets />} />
-        <Route path="/event/:id" element={<SpecificEvent />} />
+        <Route path="/event/:eventId" element={<SpecificEvent />} />
+        <Route path="/scanner/:eventId" element={<ScannerPage />} />
       </Routes>
 
       {location.pathname !== '/' && <BottomNav />}
