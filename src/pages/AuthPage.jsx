@@ -1,0 +1,205 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { User, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { login, signup } from '../api';
+
+function FieldLabel({ children }) {
+    return (
+        <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+            {children}
+        </label>
+    );
+}
+
+function InputField({ icon: Icon, rightElement, ...props }) {
+    return (
+        <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors">
+            {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
+            <input
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans"
+                {...props}
+            />
+            {rightElement}
+        </div>
+    );
+}
+
+export default function AuthPage({ mode: initialMode = 'login' }) {
+    const navigate = useNavigate();
+    const [mode, setMode] = useState(initialMode); // 'login' | 'signup'
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+    const [form, setForm] = useState({ name: '', email: '', password: '' });
+
+    const handleChange = (e) => {
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        setError('');
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (mode === 'signup') {
+            
+            // Check if email already exists
+            const exists = users.find((u) => u.email === form.email);
+            if (exists) {
+                setError('Ya existe una cuenta con ese correo.');
+                return;
+            }
+
+            const newUser = {
+                id: crypto.randomUUID(),
+                name: form.name,
+                email: form.email,
+                password: form.password, // in production this would be hashed
+                memberSince: new Date().toLocaleDateString('es-CL', { month: 'short', year: 'numeric' }),
+            };
+
+            const data = await signup(form.name, form.email, form.password);
+            if (data.error) { setError(data.error); return; }
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            navigate('/home');
+
+        } else {
+            // Login
+            const user = users.find((u) => u.email === form.email && u.password === form.password);
+            if (!user) {
+                setError('Correo o contraseña incorrectos.');
+                return;
+            }
+
+            const data = await login(form.email, form.password);
+            if (data.error) { setError(data.error); return; }
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            navigate('/home');
+        }
+    };
+
+    const switchMode = (newMode) => {
+        setMode(newMode);
+        setError('');
+        setForm({ name: '', email: '', password: '' });
+    };
+
+    return (
+        <div className="min-h-screen bg-background max-w-md mx-auto flex flex-col px-6 pt-10 pb-28">
+
+            {/* Page intro */}
+            <div className="mb-8">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    {mode === 'signup' ? 'Registro' : 'Acceso'}
+                </p>
+                <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
+                    {mode === 'signup' ? 'Crea tu cuenta' : 'Bienvenido de vuelta'}
+                </h2>
+            </div>
+
+            {/* Mode toggle */}
+            <div className="flex gap-2 mb-8">
+                <button
+                    onClick={() => switchMode('login')}
+                    className={`flex-1 py-2.5 text-xs uppercase tracking-widest font-sans font-medium rounded-[10px] border transition-colors ${
+                        mode === 'login'
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'bg-card text-muted-foreground border-border hover:border-foreground'
+                    }`}
+                >
+                    Iniciar Sesión
+                </button>
+                <button
+                    onClick={() => switchMode('signup')}
+                    className={`flex-1 py-2.5 text-xs uppercase tracking-widest font-sans font-medium rounded-[10px] border transition-colors ${
+                        mode === 'signup'
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'bg-card text-muted-foreground border-border hover:border-foreground'
+                    }`}
+                >
+                    Crear cuenta
+                </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+
+                {/* Name — only on signup */}
+                {mode === 'signup' && (
+                    <div>
+                        <FieldLabel>Nombre completo</FieldLabel>
+                        <InputField
+                            icon={User}
+                            type="text"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            placeholder="Ej. Cristóbal Campos"
+                            required
+                        />
+                    </div>
+                )}
+
+                <div>
+                    <FieldLabel>Correo electrónico</FieldLabel>
+                    <InputField
+                        icon={Mail}
+                        type="email"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="tu@correo.com"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <FieldLabel>Contraseña</FieldLabel>
+                    <InputField
+                        icon={Lock}
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        placeholder="········"
+                        required
+                        rightElement={
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((s) => !s)}
+                                className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+                            >
+                                {showPassword
+                                    ? <EyeOff className="w-4 h-4" />
+                                    : <Eye className="w-4 h-4" />
+                                }
+                            </button>
+                        }
+                    />
+                </div>
+
+                {/* Error message */}
+                {error && (
+                    <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
+                        ⚠ {error}
+                    </p>
+                )}
+
+                {/* Submit */}
+                <button
+                    type="submit"
+                    className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity mt-2"
+                >
+                    {mode === 'signup' ? 'Crear cuenta' : 'Iniciar Sesión'}
+                </button>
+            </form>
+
+            {/* Back to landing */}
+            <button
+                onClick={() => navigate('/')}
+                className="mt-4 w-full py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+            >
+                Volver
+            </button>
+        </div>
+    );
+}

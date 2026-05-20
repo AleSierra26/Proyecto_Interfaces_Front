@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Menu, User, MapPin, Calendar, Clock, Users, DollarSign, Tag, AlignLeft } from 'lucide-react';
+import { MapPin, Calendar, Clock, Users, DollarSign, Tag, AlignLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
- 
+import { v4 as uuidv4 } from 'uuid';
+import { createEvent } from '../api';
+
 function FieldLabel({ children }) {
     return (
         <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
@@ -9,7 +11,7 @@ function FieldLabel({ children }) {
         </label>
     );
 }
- 
+
 function InputField({ icon: Icon, ...props }) {
     return (
         <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card">
@@ -21,7 +23,7 @@ function InputField({ icon: Icon, ...props }) {
         </div>
     );
 }
- 
+
 function TextAreaField({ icon: Icon, ...props }) {
     return (
         <div className="flex items-start gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card">
@@ -34,27 +36,12 @@ function TextAreaField({ icon: Icon, ...props }) {
         </div>
     );
 }
- 
-function SelectField({ icon: Icon, children, ...props }) {
-    return (
-        <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card">
-            {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
-            <select
-                className="flex-1 bg-transparent text-sm text-foreground outline-none font-sans appearance-none cursor-pointer"
-                {...props}
-            >
-                {children}
-            </select>
-        </div>
-    );
-}
- 
+
 export default function CreateEventPage() {
     const navigate = useNavigate();
     const [form, setForm] = useState({
         title: '',
         description: '',
-        category: '',
         date: '',
         time: '',
         venue: '',
@@ -63,34 +50,59 @@ export default function CreateEventPage() {
         price: '',
         priceLabel: 'paid',
     });
- 
+
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
- 
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Hook up to your backend here
-        console.log('Event submitted:', form);
+
+        const newEvent = {
+            code: uuidv4().slice(0, 6).toUpperCase(),
+            title: form.title,
+            description: form.description,
+            date: new Date(`${form.date}T${form.time}`).toLocaleDateString('es-CL', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            }),
+            time: form.time,
+            venue: form.venue,
+            address: form.address,
+            price: form.priceLabel === 'free' ? 0 : Number(form.price),
+            priceLabel: form.priceLabel,
+            totalCapacity: Number(form.capacity),
+            soldTickets: 0,
+            organizer: {
+                name: 'Mi cuenta',
+                memberSince: new Date().toLocaleDateString('es-CL', { month: 'short', year: 'numeric' }),
+                eventsHosted: 1,
+            },
+        };
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const data = await createEvent({ ...newEvent, organizerId: currentUser.id });
+        if (data.error) { alert(data.error); return; }
+        navigate('/my-events');
     };
- 
+
     return (
         <div className="min-h-screen bg-background max-w-md mx-auto relative">
             <form onSubmit={handleSubmit} className="px-4 pb-32">
-                {/* Page title */}
-                    <h2 className="py-4 font-sans-serif font-bold text-2xl tracking-widest text-center">
-                        Crear evento
-                    </h2>
- 
-                {/* Divider */}
+
+                <h2 className="py-4 font-sans-serif font-bold text-2xl tracking-widest text-center">
+                    Crear evento
+                </h2>
+
                 <div className="border-t border-border mb-6" />
- 
+
                 {/* Basic info */}
                 <div className="space-y-4 mb-6">
-                    <div className='rounded-[10px]'>
+                    <div>
                         <FieldLabel>Título del evento</FieldLabel>
                         <InputField
-                            className='flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans'
                             icon={Tag}
                             name="title"
                             value={form.title}
@@ -99,14 +111,6 @@ export default function CreateEventPage() {
                             required
                         />
                     </div>
-                    {/* <div className='flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card'>
-                        <input
-                            type='text'
-                            placeholder='Buscar eventos, artistas o lugares'
-                            className='flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans'
-                            />
-                    </div> */}
- 
                     <div>
                         <FieldLabel>Descripción corta</FieldLabel>
                         <TextAreaField
@@ -118,9 +122,9 @@ export default function CreateEventPage() {
                         />
                     </div>
                 </div>
- 
+
                 <div className="border-t border-border mb-6" />
- 
+
                 {/* Date & time */}
                 <div className="mb-2">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
@@ -151,9 +155,9 @@ export default function CreateEventPage() {
                         </div>
                     </div>
                 </div>
- 
+
                 <div className="border-t border-border my-6" />
- 
+
                 {/* Location */}
                 <div className="space-y-4 mb-6">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
@@ -181,15 +185,14 @@ export default function CreateEventPage() {
                         />
                     </div>
                 </div>
- 
+
                 <div className="border-t border-border mb-6" />
- 
+
                 {/* Tickets */}
                 <div className="space-y-4 mb-6">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
                         Tickets
                     </p>
- 
                     <div>
                         <FieldLabel>Tipo de entrada</FieldLabel>
                         <div className="flex gap-2">
@@ -209,7 +212,6 @@ export default function CreateEventPage() {
                             ))}
                         </div>
                     </div>
- 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
                             <FieldLabel>Precio (CLP)</FieldLabel>
@@ -240,7 +242,7 @@ export default function CreateEventPage() {
                         </div>
                     </div>
                 </div>
- 
+
                 {/* Submit buttons */}
                 <div className="space-y-3 pt-2">
                     <button

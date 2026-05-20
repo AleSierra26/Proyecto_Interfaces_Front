@@ -8,6 +8,7 @@ import CreateEventPage from './pages/CreateEventPage';
 import MyTickets from './pages/MyTickets';
 import SpecificEvent from './pages/SpecificEvent';
 import ScannerPage from './pages/ScannerPage';
+import AuthPage from './pages/AuthPage';
 import './App.css'
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
@@ -28,6 +29,8 @@ function AppContent() {
         <Route path="/my-tickets" element={<MyTickets />} />
         <Route path="/event/:eventId" element={<SpecificEvent />} />
         <Route path="/scanner/:eventId" element={<ScannerPage />} />
+        <Route path="/auth" element={<AuthPage mode={new URLSearchParams(window.location.search).get('mode') || 'login'} />} />
+        {/* esto mira la URL, encuentra el parámetro mode, y lo pasa a AuthPage. Pero si no hay mode en la URL, lo vuelve 'login' por default */}
       </Routes>
 
       {location.pathname !== '/' && <BottomNav />}
