@@ -36,40 +36,16 @@ export default function AuthPage({ mode: initialMode = 'login' }) {
         setError('');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         if (mode === 'signup') {
-            
-            // Check if email already exists
-            const exists = users.find((u) => u.email === form.email);
-            if (exists) {
-                setError('Ya existe una cuenta con ese correo.');
-                return;
-            }
-
-            const newUser = {
-                id: crypto.randomUUID(),
-                name: form.name,
-                email: form.email,
-                password: form.password, // in production this would be hashed
-                memberSince: new Date().toLocaleDateString('es-CL', { month: 'short', year: 'numeric' }),
-            };
-
             const data = await signup(form.name, form.email, form.password);
             if (data.error) { setError(data.error); return; }
             localStorage.setItem('currentUser', JSON.stringify(data.user));
             navigate('/home');
-
         } else {
-            // Login
-            const user = users.find((u) => u.email === form.email && u.password === form.password);
-            if (!user) {
-                setError('Correo o contraseña incorrectos.');
-                return;
-            }
-
             const data = await login(form.email, form.password);
             if (data.error) { setError(data.error); return; }
             localStorage.setItem('currentUser', JSON.stringify(data.user));

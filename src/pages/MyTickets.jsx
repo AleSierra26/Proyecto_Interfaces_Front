@@ -1,67 +1,82 @@
-import { Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-
-// const events = [
-//   {
-//         id: 1,
-//         title: 'Buinazo PUC',
-//         date: 'OCT 25 - Sábado',
-//         price: '$150000',
-//         venue: 'Auditorio Nacional',
-//         //image: 'https://source.unsplash.com/random/400x300?concert'
-//     },
-//     {
-//         id: 2,
-//         title: 'Torneo Fortnite',
-//         date: 'OCT 25 - Sábado',
-//         price: '$1000',
-//         venue: 'Parque Central',
-//         //image: 'https://source.unsplash.com/random/400x300?jazz'
-//     },
-//     {
-//         id: 3,
-//         title: 'Cumpleaños de Pablo',
-//         date: 'OCT 25 - Sábado',
-//         price: '$4500',
-//         venue: 'Teatro Principal',
-//         //image: 'https://source.unsplash.com/random/400x300?theater'
-//     }
-// ];
+import { getMyTickets, listForResale } from '../api';
 
 export default function MyTickets() {
 
     const navigate = useNavigate();
     const [tickets, setTickets] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [showModal2, setShowModal2] = useState(false);
+    const [showQrModal, setShowQrModal] = useState(false);
+    const [showResaleModal, setShowResaleModal] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
+    const [resalePrice, setResalePrice] = useState('');
+    const [resaleError, setResaleError] = useState('');
+    const [resaleLoading, setResaleLoading] = useState(false);
+    const [resaleSuccess, setResaleSuccess] = useState(false);
 
-    const handleModalOpen = (ticket) => {
+    const handleQrOpen = (ticket) => {
         setSelectedTicket(ticket);
-        setShowModal(true);
+        setShowQrModal(true);
     };
-    const handleModal2Open = (ticket) => {
+
+    const handleResaleOpen = (ticket) => {
         setSelectedTicket(ticket);
-        setShowModal2(true);
+        setResalePrice('');
+        setResaleError('');
+        setResaleSuccess(false);
+        setShowResaleModal(true);
+    };
+
+    const handleResaleSubmit = async () => {
+        const numericPrice = Number(resalePrice);
+        const maxPrice = selectedTicket?.event_price ?? Infinity;
+
+        if (!resalePrice || numericPrice < 0 || numericPrice > maxPrice) {
+            setResaleError(`Ingresa un precio válido menor o igual a ${selectedTicket?.event_price}.`);
+            return;
+        }
+
+        setResaleLoading(true);
+        setResaleError('');
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const data = await listForResale(
+            selectedTicket.id,
+            currentUser.id,
+            selectedTicket.event_id,
+            Number(resalePrice)
+        );
+
+        setResaleLoading(false);
+
+        if (data.error) {
+            setResaleError(data.error);
+            return;
+        }
+
+        setResaleSuccess(true);
     };
 
     useEffect(() => {
-        const saved = JSON.parse(localStorage.getItem('myTickets')) || [];
-        setTickets(saved);
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) return;
+
+        getMyTickets(currentUser.id).then((data) => {
+            setTickets(data.tickets || []);
+        });
     }, []);
 
     return (
         <>
-            {/* Blur overlay backdrop */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowModal(false)} />
+            {/* Backdrops */}
+            {showQrModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowQrModal(false)} />
             )}
-            {showModal2 && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowModal2(false)} />
+            {showResaleModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowResaleModal(false)} />
             )}
 
-            <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20">
+            <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20 px-4">
                 <div className="flex items-end justify-between my-4">
                     <div>
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
@@ -72,18 +87,31 @@ export default function MyTickets() {
                         </h3>
                     </div>
                     <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                        3 activos
+                        Tienes {tickets.length} ticket(s)
                     </span>
                 </div>
+
+                {/* Empty state */}
+                {tickets.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-20 gap-3">
+                        <p className="font-sans font-bold text-lg tracking-widest text-foreground">
+                            Sin tickets aún
+                        </p>
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                            Compra tu primer ticket y aparecerá aquí
+                        </p>
+                    </div>
+                )}
 
                 {/* Ticket cards */}
                 <div className="space-y-6">
                     {tickets.map((ticket) => (
                         <div key={ticket.id} className="border border-border rounded-[10px] bg-card overflow-hidden">
+
                             {/* Cover image */}
                             <div
-                                onClick={() => navigate(`/event/${ticket.eventId}`)}
-                                className="relative w-full aspect-[4/3] rounded-[10px] bg-muted cursor-pointer"
+                                onClick={() => navigate(`/event/${ticket.event_id}`)}
+                                className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
                             >
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <span className="text-muted-foreground/50 text-sm font-sans">
@@ -97,20 +125,20 @@ export default function MyTickets() {
 
                                 {/* Title & price */}
                                 <div
-                                    onClick={() => navigate(`/event/${ticket.eventId}`)}
+                                    onClick={() => navigate(`/event/${ticket.event_id}`)}
                                     className="flex items-start justify-between gap-4 cursor-pointer mb-4"
                                 >
                                     <div className="flex-1">
                                         <h4 className="font-sans font-bold text-base tracking-widest">
-                                            {ticket.Title}
+                                            {ticket.event_title}
                                         </h4>
                                         <p className="text-xs text-muted-foreground font-sans mt-0.5">
-                                            {ticket.Venue}
+                                            {ticket.event_venue}
                                         </p>
                                     </div>
                                     <div className="text-right flex-shrink-0">
                                         <p className="font-sans font-bold text-base">
-                                            ${ticket.Price?.toLocaleString()}
+                                            ${ticket.event_price?.toLocaleString()}
                                         </p>
                                         <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
                                             CLP
@@ -118,14 +146,14 @@ export default function MyTickets() {
                                     </div>
                                 </div>
 
-                                {/* Date & time row */}
+                                {/* Date & time */}
                                 <div className="flex gap-6 border-t border-border pt-3 mb-4">
                                     <div>
                                         <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
                                             Fecha
                                         </p>
                                         <p className="text-xs font-sans text-foreground mt-0.5">
-                                            {ticket.Date}
+                                            {ticket.event_date}
                                         </p>
                                     </div>
                                     <div>
@@ -133,7 +161,7 @@ export default function MyTickets() {
                                             Hora
                                         </p>
                                         <p className="text-xs font-sans text-foreground mt-0.5">
-                                            {ticket.Time}
+                                            {ticket.event_time}
                                         </p>
                                     </div>
                                 </div>
@@ -141,13 +169,13 @@ export default function MyTickets() {
                                 {/* Actions */}
                                 <div className="flex gap-2 border-t border-border pt-4">
                                     <button
-                                        onClick={() => handleModalOpen(ticket)}
+                                        onClick={() => handleQrOpen(ticket)}
                                         className="flex-1 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                                     >
                                         📸 Mi QR
                                     </button>
                                     <button
-                                        onClick={() => handleModal2Open(ticket)}
+                                        onClick={() => handleResaleOpen(ticket)}
                                         className="flex-1 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
                                     >
                                         Revender
@@ -160,27 +188,137 @@ export default function MyTickets() {
             </div>
 
             {/* QR Modal */}
-            {showModal && selectedTicket && (
+            {showQrModal && selectedTicket && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-                    <div className="bg-card p-4 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm">
-                        <img src={selectedTicket.qrCodeDataUrl} alt="QR" className="w-48 h-48 rounded-[10px] mx-auto block" />
-                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                    <div className="bg-card p-6 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm">
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            Tu entrada
+                        </p>
+                        <h3 className="font-sans font-bold text-base tracking-widest">
+                            {selectedTicket.event_title}
+                        </h3>
+                        <img
+                            src={selectedTicket.qrCodeDataUrl}
+                            alt="QR"
+                            className="w-48 h-48 rounded-[10px] mx-auto block"
+                        />
+                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
                             Presenta este código QR en la entrada
                         </p>
                         <p className="font-mono text-xs text-muted-foreground">
-                            {selectedTicket.token.slice(0, 8).toUpperCase()}
+                            {selectedTicket.token?.slice(0, 8).toUpperCase()}
                         </p>
+                        <button
+                            onClick={() => setShowQrModal(false)}
+                            className="w-full py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                        >
+                            Cerrar
+                        </button>
                     </div>
                 </div>
             )}
-            {/* Revender Modal */}
-            {showModal2 && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-                    <div className="bg-card p-4 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm">
-                        <h2 className='text-[40px]'>⚠️</h2>
-                        <h2>
-                            ¡Estamos trabajando en esta funcionalidad! Pronto podrás revender tus tickets.
-                        </h2>
+
+            {/* Resale Modal */}
+            {showResaleModal && selectedTicket && (
+                <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
+                    <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto pb-10 mb-16 max-h-[70vh] overflow-y-auto">
+
+                        {/* Handle */}
+                        <div className="flex justify-center pt-3 pb-4">
+                            <div className="w-10 h-1 rounded-full bg-border" />
+                        </div>
+
+                        <div className="px-4">
+                            {resaleSuccess ? (
+                                /* Success state */
+                                <div className="flex flex-col items-center py-8 gap-3 text-center">
+                                    <p className="text-4xl">✅</p>
+                                    <p className="font-sans font-bold text-base tracking-widest">
+                                        ¡Ticket publicado!
+                                    </p>
+                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                        Tu ticket está ahora disponible en el mercado de reventas
+                                    </p>
+                                    <button
+                                        onClick={() => setShowResaleModal(false)}
+                                        className="mt-2 w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                                    >
+                                        Listo
+                                    </button>
+                                </div>
+                            ) : (
+                                /* Price input state */
+                                <>
+                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                        Mercado secundario
+                                    </p>
+                                    <h3 className="font-sans font-bold text-xl tracking-widest mb-1">
+                                        Revender ticket
+                                    </h3>
+                                    <p className="text-xs text-muted-foreground font-sans mb-6">
+                                        {selectedTicket.event_title} · {selectedTicket.event_venue}
+                                    </p>
+
+                                    <div className="mb-4">
+                                        <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+                                            Tu precio de venta (CLP)
+                                        </label>
+                                        <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-background focus-within:border-foreground transition-colors">
+                                            <span className="text-muted-foreground font-sans text-sm">$</span>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max={selectedTicket?.event_price ? selectedTicket.event_price - 1 : undefined}
+                                                step="50"
+                                                value={resalePrice}
+                                                onChange={(e) => {
+                                                    const inputValue = e.target.value;
+                                                    const numericValue = Number(inputValue);
+                                                    const maxPrice = selectedTicket?.event_price ?? Infinity;
+
+                                                    if (!inputValue || (numericValue >= 0 && numericValue <= maxPrice)) {
+                                                        setResalePrice(inputValue);
+                                                        setResaleError('');
+                                                    } else {
+                                                        setResaleError(`El precio debe ser menor o igual a ${selectedTicket?.event_price}`);
+                                                    }
+                                                }}
+                                                placeholder="Ej. 15000"
+                                                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans"
+                                            />
+                                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                CLP
+                                            </span>
+                                        </div>
+                                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans mt-1.5">
+                                            Precio original: ${selectedTicket.event_price?.toLocaleString()} CLP
+                                        </p>
+                                    </div>
+
+                                    {resaleError && (
+                                        <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground mb-3">
+                                            ⚠ {resaleError}
+                                        </p>
+                                    )}
+
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setShowResaleModal(false)}
+                                            className="flex-1 py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button
+                                            onClick={handleResaleSubmit}
+                                            disabled={resaleLoading}
+                                            className="flex-1 py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity disabled:opacity-40"
+                                        >
+                                            {resaleLoading ? 'Publicando...' : 'Publicar'}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

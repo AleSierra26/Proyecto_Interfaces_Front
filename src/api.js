@@ -37,6 +37,11 @@ export async function getMyEvents(userId) {
     return res.json();
 }
 
+export async function getMyTickets(userId) {
+    const res = await fetch(`${API}/tickets/my/${userId}`);
+    return res.json();
+}
+
 export async function purchaseTicket(userId, eventId) {
     const res = await fetch(`${API}/tickets/purchase`, {
         method: 'POST',
@@ -54,3 +59,29 @@ export async function validateTicket(token, eventId) {
     });
     return res.json();
 }
+
+export async function getEventResales(eventId) {
+    const res = await fetch(`${API}/resales/event/${eventId}`);
+    return res.json();
+}
+// get all the resales for a specific event
+
+export async function purchaseResale(resaleId, buyerId) {
+    const res = await fetch(`${API}/resales/${resaleId}/purchase`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ buyerId }),
+    });
+    return res.json();
+}
+// purchase a resale ticket
+
+export async function listForResale(ticketId, sellerId, eventId, price) {
+    const res = await fetch(`${API}/resales`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticketId, sellerId, eventId, price }),
+    });
+    return res.json();
+}
+// list a ticket for resale

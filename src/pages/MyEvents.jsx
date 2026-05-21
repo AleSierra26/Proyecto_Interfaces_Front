@@ -7,9 +7,13 @@ export default function MyEvents() {
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        const data = await getMyEvents(currentUser.id);
-        setEvents(data.events || []);
+        const loadEvents = async () => {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const data = await getMyEvents(currentUser.id);
+            setEvents(data.events || []);
+        };
+
+        loadEvents();
     }, []);
 
     return (
@@ -39,7 +43,7 @@ export default function MyEvents() {
                         </h3>
                     </div>
                     <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                        {events.length} activos
+                        Tienes {events.length} evento(s)
                     </span>
                 </div>
 

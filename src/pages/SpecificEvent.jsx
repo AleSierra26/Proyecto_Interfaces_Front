@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { User, MapPin, Calendar, Clock, CheckCircle } from 'lucide-react';
+import { User, MapPin, Calendar, Clock, CheckCircle, Tag } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { purchaseTicket } from '../api';
-import { getEvent } from '../api';
+import { purchaseTicket, getEvent, getEventResales, purchaseResale } from '../api';
 
 export default function SpecificEvent() {
     const navigate = useNavigate();
@@ -11,17 +10,33 @@ export default function SpecificEvent() {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
+    const [showResales, setShowResales] = useState(false);
+    const [resales, setResales] = useState([]);
+    const [resalesLoading, setResalesLoading] = useState(false);
 
     useEffect(() => {
-        // Read all events from localStorage and find the one matching the code in the URL
-        const data = await getEvent(eventId);
-        if (data.event) { setEvent(data.event); }
-        else { setNotFound(true); }
-        setLoading(false);
+        getEvent(eventId).then((data) => {
+            if (data.event) setEvent(data.event);
+            else setNotFound(true);
+            setLoading(false);
+        });
     }, [eventId]);
 
+    const handleOpenResales = async () => {
+        setShowResales(true);
+        setResalesLoading(true);
+        const data = await getEventResales(eventId);
+        setResales(data.resales || []);
+        setResalesLoading(false);
+    };
+
     const handlePurchase = async () => {
-        const data = await purchaseTicket('user-123', eventId);
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            navigate('/auth');
+            return;
+        }
+        const data = await purchaseTicket(currentUser.id, eventId);
 
         if (data.tickets) {
             const detailedTickets = data.tickets.map((ticket) => ({
@@ -41,6 +56,32 @@ export default function SpecificEvent() {
         }
     };
 
+    const handlePurchaseResale = async (resaleId) => {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            navigate('/auth');
+            return;
+        }
+        const data = await purchaseResale(resaleId, currentUser.id);
+        if (data.ticket) {
+            setShowResales(false);
+
+            const detailedTicket = {
+                ...data.ticket,
+                Title: event.title,
+                eventId,
+                Date: event.date,
+                Time: event.time,
+                Venue: event.venue,
+                Price: data.resale.price,
+            };
+
+            const existing = JSON.parse(localStorage.getItem('myTickets')) || [];
+            localStorage.setItem('myTickets', JSON.stringify([...existing, detailedTicket]));
+            navigate('/my-tickets');
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-background max-w-md mx-auto flex items-center justify-center">
@@ -54,13 +95,13 @@ export default function SpecificEvent() {
     if (notFound || !event) {
         return (
             <div className="min-h-screen bg-background max-w-md mx-auto flex flex-col items-center justify-center gap-4 px-4">
-                <p className="font-serif font-bold text-2xl tracking-widest">Evento no encontrado</p>
+                <p className="font-sans font-bold text-2xl tracking-widest">Evento no encontrado</p>
                 <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
                     El evento que buscas no existe o ya no está disponible.
                 </p>
                 <button
                     onClick={() => navigate(-1)}
-                    className="mt-2 px-6 py-2.5 border border-primary text-primary font-sans font-medium text-xs uppercase tracking-widest rounded-sm hover:bg-primary hover:text-primary-foreground transition-colors"
+                    className="mt-2 px-6 py-2.5 border border-primary text-primary font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:bg-primary hover:text-primary-foreground transition-colors"
                 >
                     Volver
                 </button>
@@ -73,6 +114,83 @@ export default function SpecificEvent() {
     const almostGone = !soldOut && ticketsLeft <= 15;
 
     return (
+        <>
+            {/* Resales modal */}
+            {showResales && (
+                <>
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowResales(false)} />
+                    <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
+                        <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto pb-10 mb-16 max-h-[70vh] overflow-y-auto">
+
+                            {/* Handle */}
+                            <div className="flex justify-center pt-3 pb-4">
+                                <div className="w-10 h-1 rounded-full bg-border" />
+                            </div>
+
+                            <div className="px-4 pb-2">
+                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                    ¡Reventas!
+                                </p>
+                                <h3 className="font-sans font-bold text-xl tracking-widest mb-4">
+                                    Tickets en reventa
+                                </h3>
+
+                                {resalesLoading && (
+                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans py-8 text-center">
+                                        Cargando...
+                                    </p>
+                                )}
+
+                                {!resalesLoading && resales.length === 0 && (
+                                    <div className="flex flex-col items-center py-10 gap-2">
+                                        <p className="font-sans font-bold text-base tracking-widest">Sin reventas</p>
+                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                                            No hay tickets en reventa para este evento
+                                        </p>
+                                    </div>
+                                )}
+
+                                <div className="space-y-3">
+                                    {resales.map((resale) => (
+                                        <div key={resale.id} className="flex items-center justify-between border border-border rounded-sm p-3 bg-background">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                                                    <User className="w-4 h-4 text-muted-foreground" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-sans font-medium text-sm text-foreground">
+                                                        {resale.seller_name}
+                                                    </p>
+                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                        Vendedor verificado
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <div className="text-right">
+                                                    <p className="font-sans font-bold text-base">
+                                                        ${resale.price.toLocaleString()}
+                                                    </p>
+                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                        CLP
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    onClick={() => handlePurchaseResale(resale.id)}
+                                                    className="px-3 py-2 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                                                >
+                                                    Comprar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
         <div className="min-h-screen bg-background max-w-md mx-auto py-5 relative">
 
             {/* Event image */}
@@ -161,12 +279,12 @@ export default function SpecificEvent() {
                         <div>
                             <div className="flex items-center gap-1.5">
                                 <p className="font-sans font-bold text-sm tracking-widest">
-                                    {event.organizer.name}
+                                    {event.organizer_name}
                                 </p>
                                 <CheckCircle className="w-3.5 h-3.5 text-foreground" />
                             </div>
                             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mt-0.5">
-                                {event.organizer.eventsHosted} eventos · desde {event.organizer.memberSince}
+                                Organiza eventos desde {event.organizer_since}
                             </p>
                         </div>
                     </div>
@@ -186,7 +304,14 @@ export default function SpecificEvent() {
                 >
                     {soldOut ? 'Agotado' : 'Comprar 1 ticket'}
                 </button>
+                <button
+                    onClick={handleOpenResales}
+                    className="mt-2 w-full py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all bg-muted text-muted-foreground"
+                >
+                    Ver reventas
+                </button>
             </div>
         </div>
+    </>
     );
 }

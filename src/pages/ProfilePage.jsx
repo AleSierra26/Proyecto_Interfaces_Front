@@ -1,6 +1,18 @@
+import { useState, useEffect } from 'react';
 import { Menu, User, Pencil, Bookmark } from 'lucide-react';
 
 export default function ProfilePage() {
+    const [userName, setUserName] = useState('');
+    const [memberSince, setMemberSince] = useState('');
+
+    useEffect(() => {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser) {
+            setUserName(currentUser.name);
+            setMemberSince(currentUser.member_since);
+        }
+    }, []);
+
     return (
         <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20">
 
@@ -23,10 +35,10 @@ export default function ProfilePage() {
 
                 {/* Name & meta */}
                 <h2 className="font-sans-serif font-bold text-xl tracking-widest">
-                    Cristóbal Campos
+                    {userName}
                 </h2>
                 <p className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground font-sans-serif">
-                    Miembro desde Oct 2023 · Premium
+                    Miembro desde {memberSince} · Premium
                 </p>
 
                 {/* Action buttons — matches SearchBar.jsx button styles */}
