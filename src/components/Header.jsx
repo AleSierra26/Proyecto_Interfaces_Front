@@ -5,6 +5,7 @@ import QuorumLogo from '../assets/quorumlogo.png';
 export default function Header() {
 
     const navigate = useNavigate();
+    const currentUser = localStorage.getItem('currentUser');
 
     return (
         <header className='sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border'>
@@ -18,13 +19,15 @@ export default function Header() {
                     Quorum
                 </h1>
 
-                <div className='flex items-center ml-auto'>
-                    <button className='w-[40px] h-[40px] rounded-full bg-primary flex items-center justify-center'
-                    aria-label='Profile' onClick={() => navigate('/profile')}
-                    >
-                        <User className='w-[20px] h-[20px] text-primary-foreground' />
-                    </button>
-                </div>
+                {currentUser && (
+                    <div className='flex items-center ml-auto'>
+                        <button className='w-[40px] h-[40px] rounded-full bg-primary flex items-center justify-center'
+                        aria-label='Profile' onClick={() => navigate('/profile')}
+                        >
+                            <User className='w-[20px] h-[20px] text-primary-foreground' />
+                        </button>
+                    </div>
+                )}
             </div>
         </header>
     );

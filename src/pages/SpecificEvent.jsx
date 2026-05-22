@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { User, MapPin, Calendar, Clock, CheckCircle, Tag } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { purchaseTicket, getEvent, getEventResales, purchaseResale } from '../api';
+import { purchaseTicket, getEvent, getEventResales, purchaseResale, getMyTickets } from '../api';
 
 export default function SpecificEvent() {
     const navigate = useNavigate();
@@ -13,13 +13,27 @@ export default function SpecificEvent() {
     const [showResales, setShowResales] = useState(false);
     const [resales, setResales] = useState([]);
     const [resalesLoading, setResalesLoading] = useState(false);
+    const [tickets, setTickets] = useState([]);
+    const [hasTicket, setHasTicket] = useState(false);
 
     useEffect(() => {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) return;
+
         getEvent(eventId).then((data) => {
             if (data.event) setEvent(data.event);
             else setNotFound(true);
             setLoading(false);
         });
+
+        getMyTickets(currentUser.id).then((data) => {
+            const fetched = data.tickets || [];
+            setTickets(fetched);
+            const match = fetched.some((t) => String(t.event_id) === String(eventId));
+            setHasTicket(match);
+        });
+
+        
     }, [eventId]);
 
     const handleOpenResales = async () => {
@@ -36,24 +50,34 @@ export default function SpecificEvent() {
             navigate('/auth');
             return;
         }
-        const data = await purchaseTicket(currentUser.id, eventId);
 
-        if (data.tickets) {
-            const detailedTickets = data.tickets.map((ticket) => ({
-                ...ticket,
-                Title: event.title,
+        navigate('/payment', {
+            state: {
                 eventId,
-                Date: event.date,
-                Time: event.time,
-                Venue: event.venue,
-                Price: event.price,
-                Address: event.address,
-            }));
+                eventTitle: event.title,
+                eventVenue: event.venue,
+                eventDate: event.date,
+                price: event.price,
+            }
+        });
+        // const data = await purchaseTicket(currentUser.id, eventId);
 
-            const existing = JSON.parse(localStorage.getItem('myTickets')) || [];
-            localStorage.setItem('myTickets', JSON.stringify([...existing, ...detailedTickets]));
-            navigate('/my-tickets');
-        }
+        // if (data.tickets) {
+        //     const detailedTickets = data.tickets.map((ticket) => ({
+        //         ...ticket,
+        //         Title: event.title,
+        //         eventId,
+        //         Date: event.date,
+        //         Time: event.time,
+        //         Venue: event.venue,
+        //         Price: event.price,
+        //         Address: event.address,
+        //     }));
+
+        //     const existing = JSON.parse(localStorage.getItem('myTickets')) || [];
+        //     localStorage.setItem('myTickets', JSON.stringify([...existing, ...detailedTickets]));
+        //     navigate('/my-tickets');
+        // }
     };
 
     const handlePurchaseResale = async (resaleId) => {
@@ -62,24 +86,35 @@ export default function SpecificEvent() {
             navigate('/auth');
             return;
         }
-        const data = await purchaseResale(resaleId, currentUser.id);
-        if (data.ticket) {
-            setShowResales(false);
 
-            const detailedTicket = {
-                ...data.ticket,
-                Title: event.title,
+        navigate('/payment', {
+            state: {
                 eventId,
-                Date: event.date,
-                Time: event.time,
-                Venue: event.venue,
-                Price: data.resale.price,
-            };
+                eventTitle: event.title,
+                eventVenue: event.venue,
+                eventDate: event.date,
+                price: resales.find((r) => r.id === resaleId)?.price,
+                resaleId,
+            }
+        });
+        // const data = await purchaseResale(resaleId, currentUser.id);
+        // if (data.ticket) {
+        //     setShowResales(false);
 
-            const existing = JSON.parse(localStorage.getItem('myTickets')) || [];
-            localStorage.setItem('myTickets', JSON.stringify([...existing, detailedTicket]));
-            navigate('/my-tickets');
-        }
+        //     const detailedTicket = {
+        //         ...data.ticket,
+        //         Title: event.title,
+        //         eventId,
+        //         Date: event.date,
+        //         Time: event.time,
+        //         Venue: event.venue,
+        //         Price: data.resale.price,
+        //     };
+
+        //     const existing = JSON.parse(localStorage.getItem('myTickets')) || [];
+        //     localStorage.setItem('myTickets', JSON.stringify([...existing, detailedTicket]));
+        //     navigate('/my-tickets');
+        // }
     };
 
     if (loading) {
@@ -205,7 +240,7 @@ export default function SpecificEvent() {
                 )}
             </div>
 
-            <div className="px-4 pt-6 pb-32">
+            <div className="px-4 pt-6 pb-40">
 
                 {/* Title & price */}
                 <div className="flex items-start justify-between gap-4 mb-6">
@@ -294,21 +329,25 @@ export default function SpecificEvent() {
             {/* Purchase bar */}
             <div className="fixed mb-2 bottom-12 left-1/2 -translate-x-1/2 w-full max-w-md bg-background/95 backdrop-blur-sm border-t border-border px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
                 <button
-                    disabled={soldOut}
+                    disabled={soldOut || hasTicket}
                     onClick={handlePurchase}
                     className={`w-full py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all ${
-                        soldOut
+                        soldOut || hasTicket
                             ? 'bg-muted text-muted-foreground cursor-not-allowed'
                             : 'bg-primary text-primary-foreground hover:opacity-90'
                     }`}
                 >
-                    {soldOut ? 'Agotado' : 'Comprar 1 ticket'}
+                    {soldOut ? 'Agotado' : hasTicket ? 'Ya compraste un ticket' : 'Comprar 1 ticket'}
                 </button>
                 <button
                     onClick={handleOpenResales}
-                    className="mt-2 w-full py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all bg-muted text-muted-foreground"
+                    className={`mt-2 w-full py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all bg-muted text-muted-foreground ${
+                        hasTicket
+                            ? 'cursor-not-allowed'
+                            : 'hover:bg-muted/90 border border-black'
+                    }`}
                 >
-                    Ver reventas
+                    {hasTicket ? '¡Deja tickets para los demás!' : 'Ver reventas'}
                 </button>
             </div>
         </div>

@@ -37,6 +37,22 @@ export async function getMyEvents(userId) {
     return res.json();
 }
 
+export async function updateEvent(code, eventData) {
+    const res = await fetch(`${API}/events/${code}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventData),
+    });
+    return res.json();
+}
+
+export async function deleteEvent(code) {
+    const res = await fetch(`${API}/events/${code}`, {
+        method: 'DELETE',
+    });
+    return res.json();
+}
+
 export async function getMyTickets(userId) {
     const res = await fetch(`${API}/tickets/my/${userId}`);
     return res.json();

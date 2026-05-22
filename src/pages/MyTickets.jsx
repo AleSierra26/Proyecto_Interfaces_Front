@@ -146,6 +146,14 @@ export default function MyTickets() {
                                     </div>
                                 </div>
 
+                                {ticket.status === 'cancelled' && (
+                                    <div className="flex items-center gap-2 bg-muted rounded-[10px] px-3 py-2 mb-3">
+                                        <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
+                                            ⚠ Este evento fue cancelado · Ticket inválido
+                                        </p>
+                                    </div>
+                                )}
+
                                 {/* Date & time */}
                                 <div className="flex gap-6 border-t border-border pt-3 mb-4">
                                     <div>
@@ -170,13 +178,22 @@ export default function MyTickets() {
                                 <div className="flex gap-2 border-t border-border pt-4">
                                     <button
                                         onClick={() => handleQrOpen(ticket)}
-                                        className="flex-1 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                                        disabled={ticket.status === 'cancelled'}
+                                        className={`flex-1 py-2.5 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-opacity ${
+                                            ticket.status === 'cancelled'
+                                                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                                                : 'bg-primary text-primary-foreground hover:opacity-90'
+                                        }`}
                                     >
                                         📸 Mi QR
                                     </button>
                                     <button
                                         onClick={() => handleResaleOpen(ticket)}
-                                        className="flex-1 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                                        className={`flex-1 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-colors ${
+                                            ticket.status === 'cancelled'
+                                                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                                                : 'bg-primary text-primary-foreground hover:border-foreground hover:text-foreground'
+                                        }`}
                                     >
                                         Revender
                                     </button>
