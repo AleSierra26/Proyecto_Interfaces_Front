@@ -153,10 +153,10 @@ export default function AuthPage({ mode: initialMode = 'login' }) {
                     />
                 </div>
 
-                {/* Error message */}
+                {/* Error message — Feedback: errors are red, never muted-gray */}
                 {error && (
-                    <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
-                        ⚠ {error}
+                    <p role="alert" className="text-[10px] uppercase tracking-widest font-sans text-destructive flex items-center gap-1">
+                        <span aria-hidden="true">⚠</span> {error}
                     </p>
                 )}
 

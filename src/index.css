@@ -28,7 +28,7 @@
     --accent: 0 0% 35%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 0% 30%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 0 0% 88%;
@@ -39,7 +39,7 @@
     --spacing: 0.3rem;
 
     --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.03);
-    --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.05);
+    --shadow: 0px 2px 8px 0px hsl(0 0% 0% / 0.07);
 
     --tracking-normal: 0.05em;
 
@@ -85,7 +85,7 @@
     --accent: 0 0% 55%;
     --accent-foreground: 0 0% 6%;
 
-    --destructive: 0 0% 45%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 0 0% 18%;
@@ -108,8 +108,63 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
     letter-spacing: 0.05em;
+  }
+
+  /* Accessible focus ring — visible only on keyboard navigation */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background rounded-sm;
+  }
+
+  /*
+   * Fitts's Law: touch targets mínimos de 44×44 px en mobile
+   * para reducir errores de puntería y fatiga del usuario.
+   */
+  button, a, [role="button"] {
+    min-height: 44px;
+    touch-action: manipulation; /* elimina el delay de 300 ms en mobile */
+  }
+
+  /*
+   * Excepción: ítems en línea que no necesitan el mínimo completo
+   * (chevrons, botones icon-only con padding propio, etc.)
+   */
+  button.inline-btn {
+    min-height: unset;
+  }
+
+  /* Press feedback on interactive elements */
+  button:active:not(:disabled),
+  a:active {
+    transform: scale(0.98);
+  }
+}
+
+@layer utilities {
+  /* Skeleton shimmer for loading states */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--border)) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+
+  /* Hide scrollbar (horizontal carousels) */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

@@ -1,17 +1,29 @@
+/*
+ * Personalized greeting — Visual Hierarchy: headline anchors the page,
+ * sub-text is secondary. Gestalt Common Region: the greeting sits in its
+ * own distinct zone before the search/action area.
+ */
 export default function HeroBanner() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const firstName = currentUser?.name?.split(' ')[0] ?? 'Tú';
+
+    const hour = new Date().getHours();
+    const greeting =
+        hour < 12 ? 'Buenos días' :
+        hour < 19 ? 'Buenas tardes' :
+                    'Buenas noches';
+
     return (
-        <section className="mx-4 mt-4 rounded-sm overflow-hidden bg-white">
-            <div className="flex flex-col items-center justify-center text-center px-6">
-                <h2 className="font-sans-serif font-bold text-2xl md:text-3xl text-primary leading-tight tracking-zen">
-                    Ingresa un código de evento
-                </h2>
-                <p className="mt-2 text-sm text-primary font-sans-serif max-w-xs">
-                    O busca un evento por su nombre, fecha o categoría
-                </p>
-                {/* <button className="mt-5 px-6 py-2.5 bg-primary-foreground text-primary font-sans-serif font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity">
-                    Empezar ahora
-                </button> */}
-            </div>
+        <section className="px-4 pt-6 pb-2 animate-fade-in">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                {greeting}
+            </p>
+            <h2 className="font-sans font-bold text-2xl tracking-zen mt-0.5">
+                {firstName} 👋
+            </h2>
+            <p className="text-xs text-muted-foreground font-sans mt-1">
+                ¿Qué quieres hacer hoy?
+            </p>
         </section>
     );
 }

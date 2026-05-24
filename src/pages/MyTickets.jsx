@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { QrCode, ArrowLeftRight, Ticket } from 'lucide-react';
 import { getMyTickets, listForResale } from '../api';
 
 export default function MyTickets() {
@@ -76,48 +77,80 @@ export default function MyTickets() {
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowResaleModal(false)} />
             )}
 
-            <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20 px-4">
-                <div className="flex items-end justify-between my-4">
+            <div className="min-h-screen bg-background max-w-md md:max-w-2xl mx-auto relative pb-24 px-4 animate-fade-in">
+
+                {/* Header */}
+                <div className="flex items-end justify-between my-6">
                     <div>
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
                             Activos
                         </p>
-                        <h3 className="font-sans-serif font-bold text-xl tracking-widest">
+                        <h3 className="font-sans font-bold text-xl tracking-widest">
                             Mis Tickets
                         </h3>
                     </div>
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                        Tienes {tickets.length} ticket(s)
-                    </span>
+                    {tickets.length > 0 && (
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            {tickets.length} ticket{tickets.length !== 1 ? 's' : ''}
+                        </span>
+                    )}
                 </div>
 
-                {/* Empty state */}
+                {/*
+                 * Empty state — Feedback + Affordance: el estado vacío es
+                 * informativo y guía al usuario hacia su próxima acción.
+                 */}
                 {tickets.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-20 gap-3">
+                        <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
+                            <Ticket className="w-6 h-6 text-muted-foreground/40" aria-hidden="true" />
+                        </div>
                         <p className="font-sans font-bold text-lg tracking-widest text-foreground">
                             Sin tickets aún
                         </p>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
                             Compra tu primer ticket y aparecerá aquí
                         </p>
+                        <button
+                            onClick={() => navigate('/home')}
+                            className="mt-2 px-6 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                        >
+                            Explorar eventos
+                        </button>
                     </div>
                 )}
 
-                {/* Ticket cards */}
-                <div className="space-y-6">
+                {/*
+                 * Ticket cards — Gestalt Closure: el borde redondeado y
+                 * la línea de puntos entre la imagen y la info evocan
+                 * visualmente la forma de un ticket físico, creando una
+                 * unidad perceptual reconocible.
+                 * Gestalt Similarity: todas las cards comparten la misma
+                 * estructura → el usuario sabe cómo leer cada una.
+                 */}
+                <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
                     {tickets.map((ticket) => (
                         <div key={ticket.id} className="border border-border rounded-[10px] bg-card overflow-hidden">
 
                             {/* Cover image */}
                             <div
                                 onClick={() => navigate(`/event/${ticket.event_id}`)}
-                                className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
+                                className="relative w-full aspect-[4/3] bg-muted cursor-pointer hover:opacity-90 transition-opacity"
                             >
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-muted-foreground/50 text-sm font-sans">
-                                        Imagen Aquí!
-                                    </span>
+                                    <Ticket className="w-10 h-10 text-muted-foreground/20" aria-hidden="true" />
                                 </div>
+                            </div>
+
+                            {/*
+                             * Perforación — Gestalt Closure: la serie de puntos
+                             * imita la línea de corte de un ticket físico. El
+                             * usuario reconoce el patrón sin instrucción verbal.
+                             */}
+                            <div className="flex items-center gap-0">
+                                <div className="w-4 h-4 rounded-full bg-background border border-border -ml-2 flex-shrink-0" />
+                                <div className="flex-1 border-t-2 border-dashed border-border mx-1" />
+                                <div className="w-4 h-4 rounded-full bg-background border border-border -mr-2 flex-shrink-0" />
                             </div>
 
                             {/* Ticket info */}
@@ -146,6 +179,7 @@ export default function MyTickets() {
                                     </div>
                                 </div>
 
+                                {/* Cancelled badge */}
                                 {ticket.status === 'cancelled' && (
                                     <div className="flex items-center gap-2 bg-muted rounded-[10px] px-3 py-2 mb-3">
                                         <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
@@ -174,27 +208,34 @@ export default function MyTickets() {
                                     </div>
                                 </div>
 
-                                {/* Actions */}
+                                {/*
+                                 * Actions — Visual Hierarchy: Ver QR es la acción
+                                 * primaria (lo que el usuario necesita en la entrada),
+                                 * Revender es secundaria (contorno).
+                                 */}
                                 <div className="flex gap-2 border-t border-border pt-4">
                                     <button
                                         onClick={() => handleQrOpen(ticket)}
                                         disabled={ticket.status === 'cancelled'}
-                                        className={`flex-1 py-2.5 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-opacity ${
+                                        className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-opacity ${
                                             ticket.status === 'cancelled'
                                                 ? 'bg-muted text-muted-foreground cursor-not-allowed'
                                                 : 'bg-primary text-primary-foreground hover:opacity-90'
                                         }`}
                                     >
-                                        📸 Mi QR
+                                        <QrCode className="w-3.5 h-3.5" aria-hidden="true" />
+                                        Mi QR
                                     </button>
                                     <button
                                         onClick={() => handleResaleOpen(ticket)}
-                                        className={`flex-1 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-colors ${
+                                        disabled={ticket.status === 'cancelled'}
+                                        className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 border font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-colors ${
                                             ticket.status === 'cancelled'
-                                                ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                                                : 'bg-primary text-primary-foreground hover:border-foreground hover:text-foreground'
+                                                ? 'border-border text-muted-foreground cursor-not-allowed'
+                                                : 'border-border text-muted-foreground hover:border-foreground hover:text-foreground'
                                         }`}
                                     >
+                                        <ArrowLeftRight className="w-3.5 h-3.5" aria-hidden="true" />
                                         Revender
                                     </button>
                                 </div>
@@ -207,7 +248,7 @@ export default function MyTickets() {
             {/* QR Modal */}
             {showQrModal && selectedTicket && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-                    <div className="bg-card p-6 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm">
+                    <div className="bg-card p-6 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm animate-fade-in">
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
                             Tu entrada
                         </p>
@@ -216,7 +257,7 @@ export default function MyTickets() {
                         </h3>
                         <img
                             src={selectedTicket.qrCodeDataUrl}
-                            alt="QR"
+                            alt="QR de entrada"
                             className="w-48 h-48 rounded-[10px] mx-auto block"
                         />
                         <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
@@ -240,16 +281,17 @@ export default function MyTickets() {
                 <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
                     <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto pb-10 mb-16 max-h-[70vh] overflow-y-auto">
 
-                        {/* Handle */}
+                        {/* Handle — affordance: el pill indica que el sheet es deslizable */}
                         <div className="flex justify-center pt-3 pb-4">
                             <div className="w-10 h-1 rounded-full bg-border" />
                         </div>
 
                         <div className="px-4">
                             {resaleSuccess ? (
-                                /* Success state */
                                 <div className="flex flex-col items-center py-8 gap-3 text-center">
-                                    <p className="text-4xl">✅</p>
+                                    <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
+                                        <ArrowLeftRight className="w-6 h-6 text-foreground" aria-hidden="true" />
+                                    </div>
                                     <p className="font-sans font-bold text-base tracking-widest">
                                         ¡Ticket publicado!
                                     </p>
@@ -264,7 +306,6 @@ export default function MyTickets() {
                                     </button>
                                 </div>
                             ) : (
-                                /* Price input state */
                                 <>
                                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
                                         Mercado secundario
@@ -313,7 +354,7 @@ export default function MyTickets() {
                                     </div>
 
                                     {resaleError && (
-                                        <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground mb-3">
+                                        <p className="text-[10px] uppercase tracking-widest font-sans text-destructive mb-3">
                                             ⚠ {resaleError}
                                         </p>
                                     )}

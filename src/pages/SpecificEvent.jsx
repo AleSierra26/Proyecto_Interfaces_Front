@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, MapPin, Calendar, Clock, CheckCircle, Tag } from 'lucide-react';
+import { User, MapPin, Calendar, Clock, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { purchaseTicket, getEvent, getEventResales, purchaseResale, getMyTickets } from '../api';
 
@@ -15,6 +15,7 @@ export default function SpecificEvent() {
     const [resalesLoading, setResalesLoading] = useState(false);
     const [tickets, setTickets] = useState([]);
     const [hasTicket, setHasTicket] = useState(false);
+    const [descExpanded, setDescExpanded] = useState(false);
 
     useEffect(() => {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -119,10 +120,13 @@ export default function SpecificEvent() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-background max-w-md mx-auto flex items-center justify-center">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                    Cargando...
-                </p>
+            <div className="min-h-screen bg-background max-w-md md:max-w-2xl mx-auto px-4 pt-6 space-y-4">
+                {/* Skeleton loading — Feedback: user knows content is arriving */}
+                <div className="skeleton w-full aspect-[4/3] rounded-[10px]" />
+                <div className="skeleton h-7 w-2/3 rounded" />
+                <div className="skeleton h-4 w-1/3 rounded" />
+                <div className="skeleton h-4 w-full rounded" />
+                <div className="skeleton h-4 w-5/6 rounded" />
             </div>
         );
     }
@@ -147,6 +151,10 @@ export default function SpecificEvent() {
     const ticketsLeft = event.totalCapacity - event.soldTickets;
     const soldOut = ticketsLeft <= 0;
     const almostGone = !soldOut && ticketsLeft <= 15;
+    const soldPct = event.totalCapacity > 0
+        ? Math.min(100, Math.round((event.soldTickets / event.totalCapacity) * 100))
+        : 0;
+    const descLong = event.description && event.description.length > 180;
 
     return (
         <>
@@ -226,7 +234,7 @@ export default function SpecificEvent() {
                 </>
             )}
 
-        <div className="min-h-screen bg-background max-w-md mx-auto py-5 relative">
+        <div className="min-h-screen bg-background max-w-md md:max-w-2xl mx-auto py-5 relative animate-fade-in">
 
             {/* Event image */}
             <div className="relative w-full aspect-[4/3] bg-muted rounded-[10px]">
@@ -288,16 +296,69 @@ export default function SpecificEvent() {
                     </div>
                 </div>
 
+                {/*
+                 * Availability progress bar — Visual Hierarchy + Feedback semántico:
+                 * el color del bar cambia según urgencia (verde → amarillo → rojo)
+                 * reforzando el mensaje sin necesidad de leer el texto.
+                 * Gestalt Figure/Ground: la barra rellena contrasta con el fondo muted.
+                 */}
+                {event.totalCapacity > 0 && (
+                    <div className="mb-6">
+                        <div className="flex items-center justify-between mb-1.5">
+                            <p className={`text-[10px] uppercase tracking-widest font-sans font-medium ${
+                                soldOut ? 'text-destructive' :
+                                almostGone ? 'text-foreground' :
+                                'text-muted-foreground'
+                            }`}>
+                                {soldOut ? 'Agotado' : almostGone ? `¡Solo quedan ${ticketsLeft}!` : `${ticketsLeft} disponibles`}
+                            </p>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                {soldPct}% vendido
+                            </p>
+                        </div>
+                        <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                    soldOut     ? 'bg-destructive' :
+                                    almostGone  ? 'bg-foreground'  :
+                                    soldPct > 50 ? 'bg-foreground/70' :
+                                    'bg-foreground/50'
+                                }`}
+                                style={{ width: `${soldPct}%` }}
+                                role="progressbar"
+                                aria-valuenow={soldPct}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                                aria-label={`${soldPct}% de tickets vendidos`}
+                            />
+                        </div>
+                    </div>
+                )}
+
                 <div className="border-t border-border mb-6" />
 
-                {/* Description */}
+                {/* Description — Progressive Disclosure: truncate long text, reveal on demand */}
                 <div className="mb-6">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
                         Sobre el evento
                     </p>
-                    <p className="text-sm font-sans text-foreground leading-relaxed">
+                    <p className={`text-sm font-sans text-foreground leading-relaxed transition-all ${
+                        descLong && !descExpanded ? 'line-clamp-3' : ''
+                    }`}>
                         {event.description}
                     </p>
+                    {descLong && (
+                        <button
+                            onClick={() => setDescExpanded((s) => !s)}
+                            className="mt-2 flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground font-sans hover:text-foreground transition-colors"
+                        >
+                            {descExpanded ? (
+                                <><ChevronUp className="w-3 h-3" aria-hidden="true" /> Leer menos</>
+                            ) : (
+                                <><ChevronDown className="w-3 h-3" aria-hidden="true" /> Leer más</>
+                            )}
+                        </button>
+                    )}
                 </div>
 
                 <div className="border-t border-border mb-6" />

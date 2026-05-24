@@ -38,10 +38,10 @@ export default function SearchBar() {
                 </div>
             </div>
 
-            {/* Code input modal */}
+            {/* Code input modal — animate-fade-in = Feedback inmediato al abrir */}
             {showCodeInput && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-                    <div className="bg-card p-4 rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm">
+                    <div className="bg-card p-4 rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm animate-fade-in shadow-md">
                         <div className='flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card'>
                             <input
                                 type='text'

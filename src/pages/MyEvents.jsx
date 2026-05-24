@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { Plus, ScanLine, Pencil, Trash2, CalendarDays, AlertTriangle } from 'lucide-react';
 import { getMyEvents, deleteEvent } from '../api';
 
 export default function MyEvents() {
@@ -37,7 +38,6 @@ export default function MyEvents() {
             return;
         }
 
-        // Remove deleted event from local state without refetching
         setEvents((prev) => prev.filter((e) => e.code !== selectedEvent.code));
         setShowDeleteConfirm(false);
         setSelectedEvent(null);
@@ -52,10 +52,19 @@ export default function MyEvents() {
                         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
                         onClick={() => setShowDeleteConfirm(false)}
                     />
+                    {/*
+                     * Modal centrado — Gestalt Figure/Ground: overlay oscuro
+                     * empuja el modal al frente, reduciendo la carga cognitiva.
+                     * Progressive Disclosure: sólo muestra los detalles del
+                     * evento afectado cuando el usuario quiere eliminar.
+                     */}
                     <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none px-4">
-                        <div className="bg-card w-full max-w-sm rounded-[10px] p-6 pointer-events-auto space-y-4">
+                        <div className="bg-card w-full max-w-sm rounded-[10px] p-6 pointer-events-auto space-y-4 animate-fade-in">
                             <div className="text-center">
-                                <p className="text-3xl mb-3">⚠️</p>
+                                {/* Gestalt Common Region: icono delimitado = señal de advertencia */}
+                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
+                                    <AlertTriangle className="w-5 h-5 text-foreground" aria-hidden="true" />
+                                </div>
                                 <p className="font-sans font-bold text-lg tracking-widest">
                                     ¿Eliminar evento?
                                 </p>
@@ -68,11 +77,12 @@ export default function MyEvents() {
                             </div>
 
                             {deleteError && (
-                                <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground text-center">
+                                <p className="text-[10px] uppercase tracking-widest font-sans text-destructive text-center">
                                     ⚠ {deleteError}
                                 </p>
                             )}
 
+                            {/* Visual Hierarchy: cancelar secundario, eliminar primario-destructivo */}
                             <div className="flex gap-2 pt-2">
                                 <button
                                     onClick={() => setShowDeleteConfirm(false)}
@@ -93,68 +103,82 @@ export default function MyEvents() {
                 </>
             )}
 
-            <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20">
+            <div className="min-h-screen bg-background max-w-md md:max-w-2xl mx-auto relative pb-24 animate-fade-in">
 
-                {/* Manage events section */}
-                <section className="flex flex-col items-center px-4 py-5 border-b border-border">
-                    <div className="flex flex-row gap-3 my-3 w-[50%]">
-                        <button
-                            onClick={() => navigate('/create-event')}
-                            className='w-[100%] py-3 border border-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:opacity-90 transition-colors'
-                        >
-                            Crear evento
-                        </button>
+                {/*
+                 * Header + CTA — Visual Hierarchy: título a la izquierda,
+                 * botón de acción principal a la derecha (patrón F-scan).
+                 * Gestalt Proximity: título y contador agrupados = misma
+                 * unidad semántica.
+                 */}
+                <section className="flex items-center justify-between px-4 pt-6 pb-5 border-b border-border">
+                    <div>
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            Organiza
+                        </p>
+                        <h3 className="font-sans font-bold text-xl tracking-widest">
+                            Mis Eventos
+                        </h3>
                     </div>
+                    <button
+                        onClick={() => navigate('/create-event')}
+                        className="flex items-center gap-1.5 px-3.5 py-2 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                    >
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                        Nuevo
+                    </button>
                 </section>
 
-                {/* My Events section */}
-                <section className="mt-8 px-4">
-                    <div className="flex items-end justify-between mb-4">
-                        <div>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                                Activos
-                            </p>
-                            <h3 className="font-sans font-bold text-xl tracking-widest">
-                                Mis Eventos
-                            </h3>
-                        </div>
-                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                            Tienes {events.length} evento(s)
-                        </span>
-                    </div>
+                <section className="mt-6 px-4">
+                    {events.length > 0 && (
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
+                            Tienes {events.length} evento{events.length !== 1 ? 's' : ''}
+                        </p>
+                    )}
 
-                    {/* Empty state */}
+                    {/*
+                     * Empty state — Affordance + Feedback: si no hay datos,
+                     * se muestra un estado vacío con icono, mensaje claro y
+                     * el mismo CTA primario para guiar la siguiente acción
+                     * (no se deja al usuario sin camino).
+                     */}
                     {events.length === 0 && (
                         <div className="flex flex-col items-center justify-center py-20 gap-3">
+                            <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
+                                <CalendarDays className="w-6 h-6 text-muted-foreground/40" aria-hidden="true" />
+                            </div>
                             <p className="font-sans font-bold text-lg tracking-widest text-foreground">
                                 Sin eventos aún
                             </p>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
                                 Crea tu primer evento y aparecerá aquí
                             </p>
                             <button
                                 onClick={() => navigate('/create-event')}
-                                className="mt-2 px-6 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                                className="mt-2 flex items-center gap-1.5 px-6 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                             >
+                                <Plus className="w-3.5 h-3.5" aria-hidden="true" />
                                 Crear evento
                             </button>
                         </div>
                     )}
 
-                    {/* Events cards */}
-                    <div className="space-y-5">
+                    {/*
+                     * Gestalt Similarity: todas las cards comparten la misma
+                     * estructura (imagen → info → acciones), el usuario
+                     * aprende el patrón en el primer card y lo aplica al resto.
+                     */}
+                    <div className="space-y-5 md:grid md:grid-cols-2 md:gap-5 md:space-y-0">
                         {events.map((event) => (
                             <div key={event.code} className="border border-border rounded-[10px] bg-card overflow-hidden">
 
                                 {/* Cover image */}
                                 <div
                                     onClick={() => navigate(`/event/${event.code}`)}
-                                    className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
+                                    className="relative w-full aspect-[4/3] bg-muted cursor-pointer hover:opacity-90 transition-opacity"
                                 >
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <span className="text-muted-foreground/50 text-sm font-sans">
-                                            Imagen Aquí!
-                                        </span>
+                                        <CalendarDays className="w-10 h-10 text-muted-foreground/20" aria-hidden="true" />
                                     </div>
                                 </div>
 
@@ -205,25 +229,33 @@ export default function MyEvents() {
                                         </div>
                                     </div>
 
-                                    {/* Action buttons */}
+                                    {/*
+                                     * Acciones — Visual Hierarchy: escanear es la acción
+                                     * primaria (botón relleno), editar/eliminar son
+                                     * secundarias (botón contorno).
+                                     * Lucide icons mejoran la affordance vs emojis.
+                                     */}
                                     <button
                                         onClick={() => navigate(`/scanner/${event.code}`)}
-                                        className='w-full py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity'
+                                        className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                                     >
-                                        📸 Escanear Invitados
+                                        <ScanLine className="w-3.5 h-3.5" aria-hidden="true" />
+                                        Escanear Invitados
                                     </button>
                                     <div className="flex gap-2 mt-2">
                                         <button
                                             onClick={() => navigate(`/edit-event/${event.code}`)}
-                                            className='flex-1 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors'
+                                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
                                         >
-                                            ✏️ Editar
+                                            <Pencil className="w-3 h-3" aria-hidden="true" />
+                                            Editar
                                         </button>
                                         <button
                                             onClick={() => handleDeleteOpen(event)}
-                                            className='flex-1 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors'
+                                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-destructive hover:text-destructive transition-colors"
                                         >
-                                            🗑️ Eliminar
+                                            <Trash2 className="w-3 h-3" aria-hidden="true" />
+                                            Eliminar
                                         </button>
                                     </div>
                                 </div>
