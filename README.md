@@ -5,6 +5,8 @@
 
 Quorum es una aplicación web para crear, administrar y comprar entradas de eventos, con generación y validación de códigos QR para el control de acceso a los eventos.
 
+Para correr la aplicación, accede a este link: https://proyecto-interfaces-front.onrender.com/
+
 ---
 
 ## Prerequisitos

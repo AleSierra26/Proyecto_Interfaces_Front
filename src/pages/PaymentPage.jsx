@@ -64,7 +64,7 @@ export default function PaymentPage() {
         let { name, value } = e.target;
         if (name === 'cardNumber') value = formatCardNumber(value);
         if (name === 'expiry') value = formatExpiry(value);
-        if (name === 'cvv') value = value.replace(/\D/g, '').slice(0, 4);
+        if (name === 'cvv') value = value.replace(/\D/g, '').slice(0, 3);
         setForm((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: '' }));
     };
@@ -77,7 +77,7 @@ export default function PaymentPage() {
             newErrors.cardName = 'Ingresa el nombre del titular.';
         if (form.expiry.length < 5)
             newErrors.expiry = 'Fecha de vencimiento inválida.';
-        if (form.cvv.length < 3)
+        if (form.cvv.length != 3)
             newErrors.cvv = 'CVV inválido.';
         return newErrors;
     };
