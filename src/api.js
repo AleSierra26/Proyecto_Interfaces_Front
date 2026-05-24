@@ -101,3 +101,8 @@ export async function listForResale(ticketId, sellerId, eventId, price) {
     return res.json();
 }
 // list a ticket for resale
+
+export async function getEventAttendees(eventId) {
+    const res = await fetch(`${API}/tickets/event/${eventId}`);
+    return res.json();
+}

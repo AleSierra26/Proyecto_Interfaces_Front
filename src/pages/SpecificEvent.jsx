@@ -246,6 +246,11 @@ export default function SpecificEvent() {
                         ¡Últimos tickets!
                     </span>
                 )}
+                {event.status === 'finished' && (
+                    <span className="absolute top-3 left-3 bg-muted text-muted-foreground text-[9px] uppercase tracking-widest font-sans font-medium px-2.5 py-1 rounded-[10px] border border-border">
+                        Evento finalizado
+                    </span>
+                )}
             </div>
 
             <div className="px-4 pt-6 pb-40">
@@ -388,28 +393,44 @@ export default function SpecificEvent() {
             </div>
 
             {/* Purchase bar */}
-            <div className="fixed mb-2 bottom-12 left-1/2 -translate-x-1/2 w-full max-w-md md:max-w-2xl bg-background/95 backdrop-blur-sm border-t border-border px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-                <button
-                    disabled={soldOut || hasTicket}
-                    onClick={handlePurchase}
-                    className={`w-full py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all ${
-                        soldOut || hasTicket
-                            ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                            : 'bg-primary text-primary-foreground hover:opacity-90'
-                    }`}
-                >
-                    {soldOut ? 'Agotado' : hasTicket ? 'Ya compraste un ticket' : 'Comprar 1 ticket'}
-                </button>
-                <button
-                    onClick={handleOpenResales}
-                    className={`mt-2 w-full py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all bg-muted text-muted-foreground ${
-                        hasTicket
-                            ? 'cursor-not-allowed'
-                            : 'hover:bg-muted/90 border border-black'
-                    }`}
-                >
-                    {hasTicket ? '¡Deja tickets para los demás!' : 'Ver reventas'}
-                </button>
+            <div className="fixed mb-2 bottom-12 left-1/2 -translate-x-1/2 w-full max-w-md bg-background/95 backdrop-blur-sm border-t border-border px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                {event.status === 'finished' ? (
+                    /* Event finished state — both buttons replaced */
+                    <div className="space-y-2">
+                        <div className="w-full py-3 bg-muted text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] text-center">
+                            Este evento ya finalizó
+                        </div>
+                        <div className="w-full py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] text-center">
+                            Este evento ya finalizó
+                        </div>
+                    </div>
+                ) : (
+                    /* Normal purchase state */
+                    <div className="flex gap-2">
+                        <button
+                            disabled={soldOut || hasTicket}
+                            onClick={handlePurchase}
+                            className={`flex-1 py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all ${
+                                soldOut || hasTicket
+                                    ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                                    : 'bg-primary text-primary-foreground hover:opacity-90'
+                            }`}
+                        >
+                            {soldOut ? 'Agotado' : hasTicket ? 'Ya tienes un ticket' : 'Comprar ticket'}
+                        </button>
+                        <button
+                            onClick={handleOpenResales}
+                            disabled={hasTicket}
+                            className={`flex-1 py-3 border border-border font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-colors ${
+                                hasTicket
+                                    ? 'text-muted-foreground cursor-not-allowed'
+                                    : 'text-muted-foreground hover:border-foreground hover:text-foreground'
+                            }`}
+                        >
+                            Ver reventas
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     </>

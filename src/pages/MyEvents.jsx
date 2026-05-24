@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Plus, ScanLine, Pencil, Trash2, CalendarDays, AlertTriangle, Link, Check } from 'lucide-react';
-import { getMyEvents, deleteEvent } from '../api';
+import { Plus, ScanLine, Pencil, Trash2, CalendarDays, AlertTriangle, Link, Check, Users, X } from 'lucide-react';
+import { getMyEvents, deleteEvent, getEventAttendees } from '../api';
 
 export default function MyEvents() {
     const navigate = useNavigate();
@@ -11,6 +11,10 @@ export default function MyEvents() {
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState('');
     const [copiedCode, setCopiedCode] = useState(null); // tracks which event was just copied
+    const [showAttendees, setShowAttendees] = useState(false);
+    const [attendees, setAttendees] = useState([]);
+    const [attendeesLoading, setAttendeesLoading] = useState(false);
+    const [attendeesEvent, setAttendeesEvent] = useState(null);
 
     useEffect(() => {
         const loadEvents = async () => {
@@ -45,6 +49,16 @@ export default function MyEvents() {
             setCopiedCode(eventCode);
             setTimeout(() => setCopiedCode(null), 2000); // reset after 2s
         });
+    };
+
+    const handleOpenAttendees = async (e, event) => {
+        e.stopPropagation();
+        setAttendeesEvent(event);
+        setShowAttendees(true);
+        setAttendeesLoading(true);
+        const data = await getEventAttendees(event.code);
+        setAttendees(data.attendees || []);
+        setAttendeesLoading(false);
     };
 
     return (
@@ -93,6 +107,110 @@ export default function MyEvents() {
                                 >
                                     {deleting ? 'Eliminando...' : 'Sí, eliminar'}
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {/* Attendees modal */}
+            {showAttendees && attendeesEvent && (
+                <>
+                    <div
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+                        onClick={() => setShowAttendees(false)}
+                    />
+                    <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
+                        <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto pb-10 mb-16 max-h-[70vh] overflow-y-auto">
+
+                            {/* Handle */}
+                            <div className="flex justify-center pt-3 pb-2">
+                                <div className="w-10 h-1 rounded-full bg-border" />
+                            </div>
+
+                            <div className="px-4 pt-2 pb-2">
+                                <div className="flex items-start justify-between mb-4">
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                            Lista de asistentes
+                                        </p>
+                                        <h3 className="font-sans font-bold text-lg tracking-widest">
+                                            {attendeesEvent.title}
+                                        </h3>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowAttendees(false)}
+                                        className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+
+                                {attendeesLoading && (
+                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans py-8 text-center">
+                                        Cargando...
+                                    </p>
+                                )}
+
+                                {!attendeesLoading && attendees.length === 0 && (
+                                    <div className="flex flex-col items-center py-10 gap-2">
+                                        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-1">
+                                            <Users className="w-5 h-5 text-muted-foreground/40" />
+                                        </div>
+                                        <p className="font-sans font-bold text-base tracking-widest">
+                                            Sin asistentes aún
+                                        </p>
+                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                                            Nadie ha comprado un ticket todavía
+                                        </p>
+                                    </div>
+                                )}
+
+                                {!attendeesLoading && attendees.length > 0 && (
+                                    <>
+                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
+                                            {attendees.filter(a => a.status !== 'cancelled').length} confirmado{attendees.filter(a => a.status !== 'cancelled').length !== 1 ? 's' : ''}
+                                            {/* {attendees.some(a => a.status === 'cancelled') && ` · ${attendees.filter(a => a.status === 'cancelled').length} cancelado${attendees.filter(a => a.status === 'cancelled').length !== 1 ? 's' : ''}`} */}
+                                        </p>
+                                        <div className="space-y-2">
+                                            {attendees.map((attendee) => (
+                                                <div
+                                                    key={attendee.id}
+                                                    className={`flex items-center justify-between p-3 rounded-[10px] border ${
+                                                        attendee.status === 'cancelled'
+                                                            ? 'border-border bg-muted opacity-50'
+                                                            : 'border-border bg-background'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                                                            <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-sans font-medium text-sm text-foreground">
+                                                                {attendee.buyer_name}
+                                                            </p>
+                                                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                                {attendee.buyer_email}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <span className={`text-[9px] uppercase tracking-widest font-sans font-medium px-2 py-1 rounded-[6px] ${
+                                                        attendee.status === 'cancelled'
+                                                            ? 'bg-muted text-muted-foreground'
+                                                            : attendee.status === 'used'
+                                                            ? 'bg-foreground text-background'
+                                                            : 'bg-muted text-foreground'
+                                                    }`}>
+                                                        {attendee.status === 'cancelled' ? 'Cancelado'
+                                                            : attendee.status === 'used' ? 'Ingresó'
+                                                            : 'Confirmado'}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -238,6 +356,13 @@ export default function MyEvents() {
                                         Escanear Invitados
                                     </button>
                                     <div className="flex gap-2 mt-2">
+                                        <button
+                                            onClick={(e) => handleOpenAttendees(e, event)}
+                                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                                        >
+                                            <Users className="w-3 h-3" />
+                                            Asistentes
+                                        </button>
                                         <button
                                             onClick={() => navigate(`/edit-event/${event.code}`)}
                                             className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"

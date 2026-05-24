@@ -58,16 +58,20 @@ export default function CreateEventPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Build both the display date and the raw ISO timestamp
+        const rawDate = new Date(`${form.date}T${form.time}`);
+
         const newEvent = {
             code: uuidv4().slice(0, 6).toUpperCase(),
             title: form.title,
             description: form.description,
-            date: new Date(`${form.date}T${form.time}`).toLocaleDateString('es-CL', {
+            date: rawDate.toLocaleDateString('es-CL', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             }),
+            rawDate: rawDate.toISOString(), // used by the cron job to mark event as finished
             time: form.time,
             venue: form.venue,
             address: form.address,
@@ -75,11 +79,6 @@ export default function CreateEventPage() {
             priceLabel: form.priceLabel,
             totalCapacity: Number(form.capacity),
             soldTickets: 0,
-            organizer: {
-                name: 'Mi cuenta',
-                memberSince: new Date().toLocaleDateString('es-CL', { month: 'short', year: 'numeric' }),
-                eventsHosted: 1,
-            },
         };
 
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -92,7 +91,7 @@ export default function CreateEventPage() {
         <div className="min-h-screen bg-background max-w-md mx-auto relative">
             <form onSubmit={handleSubmit} className="px-4 pb-32">
 
-                <h2 className="py-4 font-sans-serif font-bold text-2xl tracking-widest text-center">
+                <h2 className="py-4 font-sans font-bold text-2xl tracking-widest text-center">
                     Crear evento
                 </h2>
 
