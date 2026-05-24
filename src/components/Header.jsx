@@ -69,7 +69,7 @@ export default function Header() {
                 {/* Profile button — always right-aligned */}
                 {currentUser && (
                     <button
-                        className='ml-auto w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0'
+                        className='ml-auto w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 inline-btn'
                         aria-label='Perfil'
                         onClick={() => navigate('/profile')}
                     >

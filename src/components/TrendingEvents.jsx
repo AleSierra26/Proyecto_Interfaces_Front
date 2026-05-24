@@ -53,15 +53,9 @@ export default function TrendingEvents() {
                          * Gestalt Similarity: todas las cards comparten
                          * dimensiones, radio y jerarquía interna idénticos.
                          */
-                        className="flex-none w-[70vw] max-w-[240px] snap-start cursor-pointer group md:w-auto md:max-w-none"
+                        className="flex-none w-[70vw] max-w-[240px] snap-start cursor-pointer group md:w-auto md:max-w-none transition-transform duration-200 hover:-translate-y-1"
                     >
-                        {/*
-                         * Image — Gestalt Common Region: área delimitada y
-                         * redondeada = una sola unidad perceptual.
-                         * Hover: micro-interacción de opacidad confirma que
-                         * la card es clickeable (affordance).
-                         */}
-                        <div className="relative w-full aspect-[3/4] rounded-[10px] overflow-hidden bg-muted mb-2.5 group-hover:opacity-90 transition-opacity">
+                        <div className="relative w-full aspect-[3/4] rounded-[10px] overflow-hidden bg-muted mb-2.5">
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <Music className="w-8 h-8 text-muted-foreground/25" aria-hidden="true" />
                             </div>

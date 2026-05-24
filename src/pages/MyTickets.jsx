@@ -130,12 +130,12 @@ export default function MyTickets() {
                  */}
                 <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
                     {tickets.map((ticket) => (
-                        <div key={ticket.id} className="border border-border rounded-[10px] bg-card overflow-hidden">
+                        <div key={ticket.id} className="border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1">
 
                             {/* Cover image */}
                             <div
                                 onClick={() => navigate(`/event/${ticket.event_id}`)}
-                                className="relative w-full aspect-[4/3] bg-muted cursor-pointer hover:opacity-90 transition-opacity"
+                                className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
                             >
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <Ticket className="w-10 h-10 text-muted-foreground/20" aria-hidden="true" />

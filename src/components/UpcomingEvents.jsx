@@ -36,13 +36,12 @@ export default function UpcomingEvents() {
              * Gestalt Continuity: dividers guide the eye down the list.
              * Responsive Design: 2-column grid on md+.
              */}
-            <div className="divide-y divide-border md:divide-y-0 md:grid md:grid-cols-2 md:gap-3">
+            <div className="space-y-3 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
                 {upcomingEvents.map((event) => (
                     <div
                         key={event.id}
                         onClick={() => navigate('/event/123456')}
-                        /* Gestalt Similarity: all list rows share the same layout and spacing */
-                        className="flex items-start justify-between py-4 cursor-pointer group md:border md:border-border md:rounded-[10px] md:p-4 md:hover:border-foreground md:transition-colors"
+                        className="flex items-start justify-between p-4 cursor-pointer group border border-border rounded-[10px] hover:border-foreground transition-colors duration-200"
                     >
                         <div className="flex-1 pr-4">
                             {/* Visual Hierarchy: date (smallest) → title (bold) → venue (muted) */}
