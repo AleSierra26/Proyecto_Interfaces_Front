@@ -1,4 +1,4 @@
-const API = '/api';
+const API = (import.meta.env.VITE_API_URL || '') + '/api';
 
 export async function signup(name, email, password) {
     const res = await fetch(`${API}/users/signup`, {
