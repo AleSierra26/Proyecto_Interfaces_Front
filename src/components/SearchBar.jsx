@@ -27,7 +27,7 @@ export default function SearchBar() {
                         Tengo un código
                     </button>
                     {/* Search input */}
-                    <div className='flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card'>
+                    <div className='flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors'>
                         <Search className='w-4 h-4 text-muted-foreground flex-shrink-0' />
                         <input
                             type='text'
@@ -42,7 +42,7 @@ export default function SearchBar() {
             {showCodeInput && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
                     <div className="bg-card p-4 rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm animate-fade-in shadow-md">
-                        <div className='flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card'>
+                        <div className='flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors'>
                             <input
                                 type='text'
                                 placeholder='Ingresa tu código aquí'

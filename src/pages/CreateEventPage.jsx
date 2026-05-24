@@ -14,7 +14,7 @@ function FieldLabel({ children }) {
 
 function InputField({ icon: Icon, ...props }) {
     return (
-        <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card">
+        <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors">
             {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
             <input
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans"
@@ -26,7 +26,7 @@ function InputField({ icon: Icon, ...props }) {
 
 function TextAreaField({ icon: Icon, ...props }) {
     return (
-        <div className="flex items-start gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card">
+        <div className="flex items-start gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors">
             {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />}
             <textarea
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans resize-none"
