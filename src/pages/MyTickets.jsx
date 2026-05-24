@@ -74,7 +74,7 @@ export default function MyTickets() {
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowQrModal(false)} />
             )}
             {showResaleModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowResaleModal(false)} />
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55]" onClick={() => setShowResaleModal(false)} />
             )}
 
             <div className="min-h-screen bg-background max-w-md md:max-w-2xl mx-auto relative pb-24 px-4 animate-fade-in">
@@ -278,8 +278,8 @@ export default function MyTickets() {
 
             {/* Resale Modal */}
             {showResaleModal && selectedTicket && (
-                <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
-                    <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto pb-10 mb-16 max-h-[70vh] overflow-y-auto">
+                <div className="fixed inset-0 flex items-end justify-center z-[60] pointer-events-none">
+                    <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]">
 
                         {/* Handle — affordance: el pill indica que el sheet es deslizable */}
                         <div className="flex justify-center pt-3 pb-4">
