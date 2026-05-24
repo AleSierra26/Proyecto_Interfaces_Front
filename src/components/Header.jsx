@@ -1,32 +1,80 @@
-import { Menu, Search, User } from 'lucide-react'
-import { useNavigate } from 'react-router-dom';
+import { User } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import QuorumLogo from '../assets/quorumlogo.png';
 
-export default function Header() {
+/* Responsive Design: desktop inline nav replaces mobile bottom nav */
+const desktopNavItems = [
+    { label: 'Inicio', url: '/home' },
+    { label: 'Mis Eventos', url: '/my-events' },
+    { label: 'Mis Tickets', url: '/my-tickets' },
+];
 
+export default function Header() {
     const navigate = useNavigate();
+    const location = useLocation();
     const currentUser = localStorage.getItem('currentUser');
+
+    const home = currentUser ? '/home' : '/';
 
     return (
         <header className='sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border'>
-            <div className='relative flex items-center px-4 py-3'>
-                
-                <div className='flex items-center'>
-                    <img src={QuorumLogo} alt="Quorum Logo" className="w-[55px] h-[55px]" />
+            <div className='flex items-center px-4 py-3 max-w-3xl mx-auto'>
+
+                {/* Logo — Gestalt Similarity: same logo placement on every screen */}
+                <div
+                    className='flex items-center gap-2.5 cursor-pointer flex-shrink-0'
+                    onClick={() => navigate(home)}
+                >
+                    <img src={QuorumLogo} alt="Quorum" className="w-9 h-9" />
+                    <span className='font-sans font-bold text-lg tracking-zen uppercase hidden sm:block'>
+                        Quorum
+                    </span>
                 </div>
 
-                <h1 className='absolute left-1/2 transform -translate-x-1/2 font-sans-serif font-bold text-3xl tracking-zen uppercase cursor-pointer' onClick={() => navigate('/home')}>
+                {/* Desktop nav: Visual Hierarchy — nav links are secondary to the logo */}
+                {currentUser && (
+                    <nav className='hidden md:flex items-center gap-7 ml-10' aria-label="Navegación principal">
+                        {desktopNavItems.map((item) => {
+                            const isActive = location.pathname === item.url
+                                || location.pathname.startsWith(item.url + '/');
+                            return (
+                                <button
+                                    key={item.url}
+                                    onClick={() => navigate(item.url)}
+                                    aria-current={isActive ? 'page' : undefined}
+                                    className={`relative text-xs uppercase tracking-widest font-sans transition-colors pb-0.5 ${
+                                        isActive
+                                            ? 'text-foreground font-medium'
+                                            : 'text-muted-foreground hover:text-foreground'
+                                    }`}
+                                >
+                                    {item.label}
+                                    {isActive && (
+                                        <span className="absolute -bottom-3.5 left-0 right-0 h-px bg-foreground" />
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </nav>
+                )}
+
+                {/* Mobile: centred wordmark */}
+                <h1
+                    className='absolute left-1/2 -translate-x-1/2 font-sans font-bold text-2xl tracking-zen uppercase cursor-pointer md:hidden'
+                    onClick={() => navigate(home)}
+                >
                     Quorum
                 </h1>
 
+                {/* Profile button — always right-aligned */}
                 {currentUser && (
-                    <div className='flex items-center ml-auto'>
-                        <button className='w-[40px] h-[40px] rounded-full bg-primary flex items-center justify-center'
-                        aria-label='Profile' onClick={() => navigate('/profile')}
-                        >
-                            <User className='w-[20px] h-[20px] text-primary-foreground' />
-                        </button>
-                    </div>
+                    <button
+                        className='ml-auto w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0'
+                        aria-label='Perfil'
+                        onClick={() => navigate('/profile')}
+                    >
+                        <User className='w-4 h-4 text-primary-foreground' />
+                    </button>
                 )}
             </div>
         </header>
