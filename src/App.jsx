@@ -15,6 +15,7 @@ import './App.css'
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 
 function AppContent() {
   const location = useLocation();
@@ -25,8 +26,8 @@ function AppContent() {
 
       <Routes>
         {/* public routes */}
-        <Route path='/' element={<LandingPage />} />
-        <Route path="/auth" element={<AuthPage mode={new URLSearchParams(window.location.search).get('mode') || 'login'} />} />
+        <Route path='/' element={<PublicRoute><LandingPage /></PublicRoute>} />
+        <Route path="/auth" element={<PublicRoute><AuthPage mode={new URLSearchParams(window.location.search).get('mode') || 'login'} /></PublicRoute>} />
         {/* esto mira la URL, encuentra el parámetro mode, y lo pasa a AuthPage. Pero si no hay mode en la URL, lo vuelve 'login' por default */}
 
         {/* private routes */}

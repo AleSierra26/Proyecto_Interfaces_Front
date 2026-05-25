@@ -26,7 +26,7 @@ export default function SearchBar() {
                     <button onClick={handleCodeClick} className='w-full py-3 border border-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] bg-primary hover:bg-primary-foreground hover:text-primary transition-colors'>
                         Tengo un código
                     </button>
-                    {/* Search input */}
+                    {/* Search input
                     <div className='flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors'>
                         <Search className='w-4 h-4 text-muted-foreground flex-shrink-0' />
                         <input
@@ -34,7 +34,7 @@ export default function SearchBar() {
                             placeholder='Buscar eventos, artistas o lugares'
                             className='flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans'
                         />
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
