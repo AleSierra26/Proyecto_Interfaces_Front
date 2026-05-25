@@ -156,7 +156,8 @@ export default function ProfilePage() {
                     <button
                         onClick={handleAvatarClick}
                         disabled={avatarUploading}
-                        className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary flex items-center justify-center border-2 border-background hover:opacity-90 transition-opacity disabled:opacity-40"
+                        className="absolute bottom-0 right-0 rounded-full bg-primary flex items-center justify-center border-2 border-background hover:opacity-90 transition-opacity disabled:opacity-40"
+                        style={{ width: '28px', height: '28px', minWidth: '28px', minHeight: '28px' }}
                         aria-label="Cambiar foto"
                     >
                         <Camera className="w-3 h-3 text-primary-foreground" />
@@ -277,7 +278,7 @@ export default function ProfilePage() {
             <section className="px-4 pt-6">
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-2 py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-red-500 hover:text-red-500 transition-colors"
                 >
                     <LogOut className="w-4 h-4" />
                     Cerrar sesión
