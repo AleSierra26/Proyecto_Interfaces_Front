@@ -32,6 +32,11 @@ export async function getEvent(code) {
     return res.json();
 }
 
+export async function getAllEvents() {
+    const res = await fetch(`${API}/events/`);
+    return res.json();
+}
+
 export async function getMyEvents(userId) {
     const res = await fetch(`${API}/events/my/${userId}`);
     return res.json();

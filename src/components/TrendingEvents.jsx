@@ -1,11 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Music } from 'lucide-react';
-
-const events = [
-    { id: 1, title: 'Buinazo PUC',        date: 'OCT 25 · Sáb', price: '$150.000', venue: 'Auditorio Nacional' },
-    { id: 2, title: 'Torneo Fortnite',     date: 'OCT 25 · Sáb', price: '$1.000',   venue: 'Parque Central' },
-    { id: 3, title: 'Cumpleaños de Pablo', date: 'OCT 25 · Sáb', price: '$4.500',   venue: 'Teatro Principal' },
-];
+import { getAllEvents } from '../api';
 
 function EventSkeleton() {
     return (
@@ -20,6 +16,16 @@ function EventSkeleton() {
 
 export default function TrendingEvents() {
     const navigate = useNavigate();
+    const [events, setEvents] = useState([]);
+
+    useEffect(() => {
+        const loadAllEvents = async () => {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const data = await getAllEvents();
+            setEvents(data.events || []);
+        };
+        loadAllEvents();
+    }, []);
 
     return (
         <section className="mt-7 animate-fade-in">
@@ -34,9 +40,9 @@ export default function TrendingEvents() {
                         En tendencia
                     </h3>
                 </div>
-                <button className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans hover:text-foreground transition-colors">
+                {/* <button className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans hover:text-foreground transition-colors">
                     Ver todo
-                </button>
+                </button> */}
             </div>
 
             {/*
@@ -48,7 +54,7 @@ export default function TrendingEvents() {
                 {events.map((event) => (
                     <div
                         key={event.id}
-                        onClick={() => navigate('/event/123456')}
+                        onClick={() => navigate(`/event/${event.code}`)}
                         /*
                          * Gestalt Similarity: todas las cards comparten
                          * dimensiones, radio y jerarquía interna idénticos.

@@ -16,13 +16,19 @@ export default function SpecificEvent() {
     const [tickets, setTickets] = useState([]);
     const [hasTicket, setHasTicket] = useState(false);
     const [descExpanded, setDescExpanded] = useState(false);
+    const [ownsEvent, setOwnsEvent] = useState(false);
 
     useEffect(() => {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!currentUser) return;
 
         getEvent(eventId).then((data) => {
-            if (data.event) setEvent(data.event);
+            if (data.event) {
+                setEvent(data.event);
+                if (currentUser.id === data.event.organizer_id) {
+                    setOwnsEvent(true);
+                }
+            }
             else setNotFound(true);
             setLoading(false);
         });
@@ -34,7 +40,6 @@ export default function SpecificEvent() {
             setHasTicket(match);
         });
 
-        
     }, [eventId]);
 
     const handleOpenResales = async () => {
@@ -429,18 +434,18 @@ export default function SpecificEvent() {
                             disabled={soldOut || hasTicket}
                             onClick={handlePurchase}
                             className={`flex-1 py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all ${
-                                soldOut || hasTicket
+                                soldOut || hasTicket || ownsEvent
                                     ? 'bg-muted text-muted-foreground cursor-not-allowed'
                                     : 'bg-primary text-primary-foreground hover:opacity-90'
                             }`}
                         >
-                            {soldOut ? 'Agotado' : hasTicket ? 'Ya tienes un ticket' : 'Comprar ticket'}
+                            {ownsEvent ? 'Eres dueño del evento' : soldOut ? 'Agotado' : hasTicket ? 'Ya tienes un ticket' : 'Comprar ticket'}
                         </button>
                         <button
                             onClick={handleOpenResales}
                             disabled={hasTicket}
                             className={`flex-1 py-3 border border-border font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-colors ${
-                                hasTicket
+                                hasTicket || ownsEvent
                                     ? 'text-muted-foreground cursor-not-allowed'
                                     : 'text-muted-foreground hover:border-foreground hover:text-foreground'
                             }`}

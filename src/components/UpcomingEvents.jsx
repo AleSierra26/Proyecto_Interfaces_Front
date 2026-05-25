@@ -1,14 +1,21 @@
 import { useNavigate } from 'react-router-dom';
 import { MapPin, ChevronRight } from 'lucide-react';
-
-const upcomingEvents = [
-    { id: 1, title: 'Concierto de Rock', date: 'OCT 25 · Sáb', price: '$2.500', venue: 'Auditorio Nacional' },
-    { id: 2, title: 'Festival de Jazz', date: 'NOV 2 · Dom', price: '$5.000', venue: 'Parque Central' },
-    { id: 3, title: 'Obra de Teatro', date: 'NOV 10 · Lun', price: '$10.000', venue: 'Teatro Principal' },
-];
+import { useEffect, useState } from 'react';
+import { getAllEvents } from '../api';
 
 export default function UpcomingEvents() {
     const navigate = useNavigate();
+
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
+
+    useEffect(() => {
+        const loadAllEvents = async () => {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const data = await getAllEvents();
+            setUpcomingEvents(data.events || []);
+        };
+        loadAllEvents();
+    }, []);
 
     return (
         <section className="mt-10 px-4 pb-28 animate-fade-in">
@@ -40,7 +47,7 @@ export default function UpcomingEvents() {
                 {upcomingEvents.map((event) => (
                     <div
                         key={event.id}
-                        onClick={() => navigate('/event/123456')}
+                        onClick={() => navigate(`/event/${event.code}`)}
                         className="flex items-start justify-between p-4 cursor-pointer group border border-border rounded-[10px] hover:border-foreground transition-colors duration-200"
                     >
                         <div className="flex-1 pr-4">
