@@ -3,6 +3,7 @@ import { MapPin, Calendar, Clock, Users, DollarSign, Tag, AlignLeft } from 'luci
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { createEvent } from '../api';
+import EventImageUpload from '../components/EventImageUpload';
 
 function FieldLabel({ children }) {
     return (
@@ -55,6 +56,8 @@ export default function CreateEventPage() {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
+    const [newEventCode, setNewEventCode] = useState(null);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -84,8 +87,30 @@ export default function CreateEventPage() {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         const data = await createEvent({ ...newEvent, organizerId: currentUser.id });
         if (data.error) { alert(data.error); return; }
-        navigate('/my-events');
+        setNewEventCode(data.event.code); // show image upload after creation
     };
+
+    if (newEventCode) {
+        return (
+            <div className="min-h-screen bg-background max-w-md mx-auto px-4 pt-10 pb-28">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Paso 2 de 2</p>
+                <h2 className="font-sans font-bold text-2xl tracking-widest mb-6">Añade una imagen</h2>
+                <EventImageUpload eventCode={newEventCode} onUpload={() => {}} />
+                <button
+                    onClick={() => navigate('/my-events')}
+                    className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                >
+                    Finalizar
+                </button>
+                <button
+                    onClick={() => navigate('/my-events')}
+                    className="w-full mt-2 py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                >
+                    Saltar por ahora
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-background max-w-md mx-auto relative">

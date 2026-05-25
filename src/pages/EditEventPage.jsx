@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, Calendar, Clock, Users, DollarSign, Tag, AlignLeft, ChevronLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getEvent, updateEvent } from '../api';
+import EventImageUpload from '../components/EventImageUpload';
 
 function FieldLabel({ children }) {
     return (
@@ -127,6 +128,12 @@ export default function EditEventPage() {
                     <ChevronLeft className="w-4 h-4" />
                     <span className="text-[10px] uppercase tracking-widest font-sans">Volver</span>
                 </button>
+
+                <EventImageUpload
+                    eventCode={eventId}
+                    currentImageUrl={form.imageUrl}
+                    onUpload={(url) => setForm((p) => ({ ...p, imageUrl: url }))}
+                />
 
                 <div className="mb-6">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">

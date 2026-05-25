@@ -29,7 +29,7 @@ export default function AuthPage({ mode: initialMode = 'login' }) {
     const [mode, setMode] = useState(initialMode); // 'login' | 'signup'
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const [form, setForm] = useState({ name: '', email: '', password: '' });
+    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' });
 
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -41,7 +41,7 @@ export default function AuthPage({ mode: initialMode = 'login' }) {
         setError('');
 
         if (mode === 'signup') {
-            const data = await signup(form.name, form.email, form.password);
+            const data = await signup(form.firstName, form.lastName, form.email, form.password);
             if (data.error) { setError(data.error); return; }
             localStorage.setItem('currentUser', JSON.stringify(data.user));
             navigate('/home');
@@ -56,7 +56,7 @@ export default function AuthPage({ mode: initialMode = 'login' }) {
     const switchMode = (newMode) => {
         setMode(newMode);
         setError('');
-        setForm({ name: '', email: '', password: '' });
+        setForm({ firstName: '', lastName: '', email: '', password: '' });
     };
 
     return (
@@ -101,18 +101,34 @@ export default function AuthPage({ mode: initialMode = 'login' }) {
 
                 {/* Name — only on signup */}
                 {mode === 'signup' && (
-                    <div>
-                        <FieldLabel>Nombre completo</FieldLabel>
-                        <InputField
-                            icon={User}
-                            type="text"
-                            name="name"
-                            value={form.name}
-                            onChange={handleChange}
-                            placeholder="Ej. Cristóbal Campos"
-                            required
-                        />
-                    </div>
+                    <>
+                        <div className="grid grid-cols-2 gap-3">
+                            <div>
+                                <FieldLabel>Nombre</FieldLabel>
+                                <InputField
+                                    icon={User}
+                                    type="text"
+                                    name="firstName"
+                                    value={form.firstName}
+                                    onChange={handleChange}
+                                    placeholder="Ej. Cristóbal Campos"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <FieldLabel>Apellido</FieldLabel>
+                                <InputField
+                                    icon={User}
+                                    type="text"
+                                    name="lastName"
+                                    value={form.lastName}
+                                    onChange={handleChange}
+                                    placeholder="Ej. Campos"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </>
                 )}
 
                 <div>

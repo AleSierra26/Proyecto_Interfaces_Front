@@ -133,13 +133,19 @@ export default function MyTickets() {
                         <div key={ticket.id} className="border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1">
 
                             {/* Cover image */}
-                            <div
-                                onClick={() => navigate(`/event/${ticket.event_id}`)}
-                                className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
-                            >
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <Ticket className="w-10 h-10 text-muted-foreground/20" aria-hidden="true" />
-                                </div>
+                            <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
+                                onClick={() => navigate(`/event/${ticket.event_id}`)}>
+                                {ticket.event_image_url ? (
+                                    <img
+                                        src={ticket.event_image_url}
+                                        alt={ticket.event_title}
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/*

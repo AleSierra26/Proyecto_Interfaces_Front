@@ -276,8 +276,18 @@ export default function MyEvents() {
                                     onClick={() => navigate(`/event/${event.code}`)}
                                     className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
                                 >
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <CalendarDays className="w-10 h-10 text-muted-foreground/20" />
+                                    <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer">
+                                        {event.image_url ? (
+                                            <img
+                                                src={event.image_url}
+                                                alt={event.title}
+                                                className="absolute inset-0 w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Copy link button — top right corner of image */}

@@ -238,8 +238,18 @@ export default function SpecificEvent() {
 
             {/* Event image */}
             <div className="relative w-full aspect-[4/3] bg-muted rounded-[10px]">
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
+                <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer">
+                    {event.image_url ? (
+                        <img
+                            src={event.image_url}
+                            alt={event.title}
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+                    ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
+                        </div>
+                    )}
                 </div>
                 {almostGone && (
                     <span className="absolute top-3 right-3 bg-background text-foreground text-[9px] uppercase tracking-widest font-sans font-medium px-2.5 py-1 rounded-[10px] border border-border">
@@ -374,8 +384,16 @@ export default function SpecificEvent() {
                         Organizador
                     </p>
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                            <User className="w-4 h-4 text-muted-foreground" />
+                        <div className="w-10 h-10 rounded-full bg-muted overflow-hidden flex items-center justify-center flex-shrink-0">
+                            {event.organizer_avatar ? (
+                                <img
+                                    src={event.organizer_avatar}
+                                    alt={event.organizer_name}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <User className="w-4 h-4 text-muted-foreground" />
+                            )}
                         </div>
                         <div>
                             <div className="flex items-center gap-1.5">

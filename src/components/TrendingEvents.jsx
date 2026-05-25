@@ -55,10 +55,18 @@ export default function TrendingEvents() {
                          */
                         className="flex-none w-[70vw] max-w-[240px] snap-start cursor-pointer group md:w-auto md:max-w-none transition-transform duration-200 hover:-translate-y-1"
                     >
-                        <div className="relative w-full aspect-[3/4] rounded-[10px] overflow-hidden bg-muted mb-2.5">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <Music className="w-8 h-8 text-muted-foreground/25" aria-hidden="true" />
-                            </div>
+                        <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer">
+                            {event.image_url ? (
+                                <img
+                                    src={event.image_url}
+                                    alt={event.title}
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Info — Gestalt Proximity: apilado hermético = una sola unidad */}

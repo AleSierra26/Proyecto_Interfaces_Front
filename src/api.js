@@ -1,10 +1,10 @@
 const API = (import.meta.env.VITE_API_URL || '') + '/api';
 
-export async function signup(name, email, password) {
+export async function signup(firstName, lastName, email, password) {
     const res = await fetch(`${API}/users/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ firstName, lastName, email, password }),
     });
     return res.json();
 }
@@ -104,5 +104,34 @@ export async function listForResale(ticketId, sellerId, eventId, price) {
 
 export async function getEventAttendees(eventId) {
     const res = await fetch(`${API}/tickets/event/${eventId}`);
+    return res.json();
+}
+
+export async function updateProfile(userId, data) {
+    const res = await fetch(`${API}/users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    return res.json();
+}
+
+export async function uploadEventImage(eventCode, file) {
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await fetch(`${API}/uploads/event/${eventCode}`, {
+        method: 'POST',
+        body: formData,
+    });
+    return res.json();
+}
+
+export async function uploadAvatar(userId, file) {
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await fetch(`${API}/uploads/avatar/${userId}`, {
+        method: 'POST',
+        body: formData,
+    });
     return res.json();
 }
