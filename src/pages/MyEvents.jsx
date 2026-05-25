@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Plus, ScanLine, Pencil, Trash2, CalendarDays, AlertTriangle, Link, Check, Users, X } from 'lucide-react';
+import { Plus, ScanLine, Pencil, Trash2, CalendarDays, AlertTriangle, Link, Check, Users, User, X } from 'lucide-react';
 import { getMyEvents, deleteEvent, getEventAttendees } from '../api';
 
 export default function MyEvents() {
@@ -170,7 +170,6 @@ export default function MyEvents() {
                                     <>
                                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
                                             {attendees.filter(a => a.status !== 'cancelled').length} confirmado{attendees.filter(a => a.status !== 'cancelled').length !== 1 ? 's' : ''}
-                                            {/* {attendees.some(a => a.status === 'cancelled') && ` · ${attendees.filter(a => a.status === 'cancelled').length} cancelado${attendees.filter(a => a.status === 'cancelled').length !== 1 ? 's' : ''}`} */}
                                         </p>
                                         <div className="space-y-2">
                                             {attendees.map((attendee) => (
@@ -184,7 +183,15 @@ export default function MyEvents() {
                                                 >
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                                                            <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                                                            {attendee.buyer_avatar_url ? (
+                                                                <img
+                                                                    src={attendee.buyer_avatar_url}
+                                                                    alt={attendee.buyer_name}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                <User className="w-4 h-4 text-muted-foreground" />
+                                                            )}
                                                         </div>
                                                         <div>
                                                             <p className="font-sans font-medium text-sm text-foreground">

@@ -167,7 +167,15 @@ export default function SpecificEvent() {
                                         <div key={resale.id} className="flex items-center justify-between border border-border rounded-sm p-3 bg-background">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                                                    <User className="w-4 h-4 text-muted-foreground" />
+                                                    {resale.seller_avatar_url ? (
+                                                        <img
+                                                            src={resale.seller_avatar_url}
+                                                            alt={resale.seller_name}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <User className="w-4 h-4 text-muted-foreground" />
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <p className="font-sans font-medium text-sm text-foreground">

@@ -128,6 +128,9 @@ export default function PaymentPage() {
                     <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
                         ¡Ticket comprado!
                     </h2>
+                    <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
+                        Verás tu ticket en la sección "Mis Tickets".
+                    </h2>
                 </div>
                 <div className="w-full border border-border rounded-[10px] bg-card p-4 text-left space-y-3">
                     <div>
@@ -146,7 +149,7 @@ export default function PaymentPage() {
                     </div>
                     <div className="border-t border-border pt-3 flex items-center justify-between">
                         <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Total pagado</p>
-                        <p className="font-sans font-bold text-base">${price?.toLocaleString()} CLP</p>
+                        <p className="font-sans font-bold text-base">${totalToPay?.toLocaleString()} CLP</p>
                     </div>
                 </div>
                 <button
