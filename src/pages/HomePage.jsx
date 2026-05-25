@@ -10,7 +10,6 @@ export default function HomePage() {
             <HeroBanner />
             <SearchBar />
             <TrendingEvents />
-            {/* <CategoryBrowser /> */}
             <UpcomingEvents />
         </div>
     );

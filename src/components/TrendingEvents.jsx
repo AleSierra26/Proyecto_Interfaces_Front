@@ -40,9 +40,6 @@ export default function TrendingEvents() {
                         En tendencia
                     </h3>
                 </div>
-                {/* <button className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans hover:text-foreground transition-colors">
-                    Ver todo
-                </button> */}
             </div>
 
             {/*

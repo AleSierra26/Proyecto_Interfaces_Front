@@ -66,24 +66,6 @@ export default function SpecificEvent() {
                 price: event.price,
             }
         });
-        // const data = await purchaseTicket(currentUser.id, eventId);
-
-        // if (data.tickets) {
-        //     const detailedTickets = data.tickets.map((ticket) => ({
-        //         ...ticket,
-        //         Title: event.title,
-        //         eventId,
-        //         Date: event.date,
-        //         Time: event.time,
-        //         Venue: event.venue,
-        //         Price: event.price,
-        //         Address: event.address,
-        //     }));
-
-        //     const existing = JSON.parse(localStorage.getItem('myTickets')) || [];
-        //     localStorage.setItem('myTickets', JSON.stringify([...existing, ...detailedTickets]));
-        //     navigate('/my-tickets');
-        // }
     };
 
     const handlePurchaseResale = async (resaleId) => {
@@ -103,24 +85,6 @@ export default function SpecificEvent() {
                 resaleId,
             }
         });
-        // const data = await purchaseResale(resaleId, currentUser.id);
-        // if (data.ticket) {
-        //     setShowResales(false);
-
-        //     const detailedTicket = {
-        //         ...data.ticket,
-        //         Title: event.title,
-        //         eventId,
-        //         Date: event.date,
-        //         Time: event.time,
-        //         Venue: event.venue,
-        //         Price: data.resale.price,
-        //     };
-
-        //     const existing = JSON.parse(localStorage.getItem('myTickets')) || [];
-        //     localStorage.setItem('myTickets', JSON.stringify([...existing, detailedTicket]));
-        //     navigate('/my-tickets');
-        // }
     };
 
     if (loading) {
