@@ -1,10 +1,11 @@
-import { ShieldCheck, Zap, Ticket } from "lucide-react";
+import { ShieldCheck, Zap, Ticket, BanknoteArrowDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const features = [
     { icon: Ticket,      title: 'Entradas seguras',    desc: 'Cada ticket tiene un QR único e infalsificable.' },
-    { icon: ShieldCheck, title: 'Reventa verificada',   desc: 'Compra y vende sin riesgo entre usuarios reales.' },
-    { icon: Zap,         title: 'Gestión instantánea',  desc: 'Crea eventos y escanea invitados desde tu celular.' },
+    { icon: ShieldCheck, title: 'Reventa verificada',   desc: 'Compra reventas sin riesgo entre usuarios reales. Todo se maneja dentro de la misma plataforma.' },
+    { icon: Zap,         title: 'Check-In instantáneo',  desc: 'Muestra tu QR o escanea invitados directo desde tu celular.' },
+    { icon: BanknoteArrowDown, title: 'No hay negocio',  desc: 'Los tickets pueden revenderse solamente a precios iguales o menores al original.' },
 ];
 
 export default function LandingPage() {

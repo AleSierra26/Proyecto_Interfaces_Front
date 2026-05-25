@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, MapPin, Calendar, Clock, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { User, MapPin, Calendar, Clock, CheckCircle, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { purchaseTicket, getEvent, getEventResales, purchaseResale, getMyTickets } from '../api';
 
@@ -240,6 +240,13 @@ export default function SpecificEvent() {
             )}
 
         <div className="min-h-screen bg-background max-w-md md:max-w-2xl mx-auto py-5 relative animate-fade-in">
+            <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6"
+            >
+                <ChevronLeft className="w-4 h-4" />
+                <span className="text-[10px] uppercase tracking-widest font-sans">Volver</span>
+            </button>
 
             {/* Event image */}
             <div className="relative w-full aspect-[4/3] bg-muted rounded-[10px]">
