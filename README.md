@@ -3,9 +3,11 @@
 
 # Quorum — Aplicación de administración de eventos.
 
-Quorum es una aplicación web para crear, administrar y comprar entradas de eventos, con generación y validación de códigos QR para el control de acceso a los eventos.
+Quorum es una aplicación web para crear, administrar y comprar entradas de eventos, con generación y validación de códigos QR acceder a los eventos. Su foco principal es garantizar seguridad al revender entradas y controlar correctamente el acceso a los eventos.
 
-Para correr la aplicación, accede a este link: https://proyecto-interfaces-front.onrender.com/
+**La aplicación está levantada en Render, por lo que para correrla, puedes simplemente acceder a este link: https://proyecto-interfaces-front.onrender.com/**
+
+Sin embargo, si igualmente quieres correrla en local, puedes seguir los pasos y consideraciones en el resto del README:
 
 ---
 
@@ -138,7 +140,7 @@ Desde aquí puedes:
 
 - Ambos servidores **deben** estar corriendo al mismo tiempo para que la aplicación funcione.
 - El frontend corre en el puerto **5173** y el backend en el puerto **3000**.
-- La única información almacenada en el browser es la sesión actual del usuario (`currentUser` en localStorage) — todo lo demás se almacena en PostgreSQL.
+- La única información almacenada en el browser es la sesión actual del usuario (`currentUser` en localStorage) — todo lo demás se almacena en la base de datos PostgreSQL.
 
 ## 👀 Rutas disponibles para visualizar:
 
