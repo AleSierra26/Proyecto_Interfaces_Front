@@ -132,7 +132,7 @@ export default function SpecificEvent() {
                 <>
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowResales(false)} />
                     <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
-                        <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto pb-10 mb-16 max-h-[70vh] overflow-y-auto">
+                        <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]">
 
                             {/* Handle */}
                             <div className="flex justify-center pt-3 pb-4">
