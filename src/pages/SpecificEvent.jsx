@@ -411,7 +411,7 @@ export default function SpecificEvent() {
             </div>
 
             {/* Purchase bar */}
-            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md md:max-w-2xl bg-background/95 backdrop-blur-sm border-t border-border px-4 pt-4 pb-[max(3.5rem,env(safe-area-inset-bottom))] md:pb-4">
+            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md md:max-w-2xl bg-background/95 backdrop-blur-sm border-t border-border px-4 pt-4 pb-[max(5.5rem,env(safe-area-inset-bottom))] md:pb-6">
                 {event.status === 'finished' ? (
                     /* Event finished state — both buttons replaced */
                     <div className="space-y-2">
