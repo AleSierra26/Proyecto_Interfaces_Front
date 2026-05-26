@@ -100,13 +100,7 @@ export default function CreateEventPage() {
                     onClick={() => navigate('/my-events')}
                     className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                 >
-                    Finalizar
-                </button>
-                <button
-                    onClick={() => navigate('/my-events')}
-                    className="w-full mt-2 py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
-                >
-                    Saltar por ahora
+                    Publicar evento
                 </button>
             </div>
         );
@@ -273,7 +267,7 @@ export default function CreateEventPage() {
                         type="submit"
                         className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                     >
-                        Publicar evento
+                        Siguiente paso
                     </button>
                     <button
                         type="button"
