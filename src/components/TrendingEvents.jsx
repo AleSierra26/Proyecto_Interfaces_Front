@@ -49,7 +49,7 @@ export default function TrendingEvents() {
              * señala implícitamente que hay más contenido (affordance de scroll).
              * Responsive Design: carrusel en mobile → grid 3 columnas en desktop.
              */}
-            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pl-4 pr-4 scrollbar-hide pb-1">
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pl-4 pr-4 scrollbar-hide pt-1 pb-1">
                 {events.map((event) => (
                     <div
                         key={event.id}
