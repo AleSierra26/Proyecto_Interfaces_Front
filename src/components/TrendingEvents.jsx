@@ -5,11 +5,13 @@ import { getAllEvents } from '../api';
 
 function EventSkeleton() {
     return (
-        <div className="flex-none w-[70vw] max-w-[240px] md:w-[280px] md:max-w-none snap-start">
-            <div className="skeleton w-full aspect-[4/3] rounded-[10px] mb-2" />
-            <div className="skeleton h-3.5 w-3/4 rounded mb-1.5" />
-            <div className="skeleton h-3 w-1/2 rounded mb-1.5" />
-            <div className="skeleton h-3.5 w-1/3 rounded" />
+        <div className="flex-none w-[70vw] max-w-[240px] md:w-[280px] md:max-w-none snap-start border border-border rounded-[10px] bg-card overflow-hidden">
+            <div className="skeleton w-full aspect-[4/3]" />
+            <div className="p-3">
+                <div className="skeleton h-3.5 w-3/4 rounded mb-1.5" />
+                <div className="skeleton h-3 w-1/2 rounded mb-1.5" />
+                <div className="skeleton h-3.5 w-1/3 rounded" />
+            </div>
         </div>
     );
 }
@@ -52,9 +54,9 @@ export default function TrendingEvents() {
                     <div
                         key={event.id}
                         onClick={() => navigate(`/event/${event.code}`)}
-                        className="flex-none w-[70vw] max-w-[240px] md:w-[280px] md:max-w-none snap-start cursor-pointer group transition-transform duration-200 hover:-translate-y-1"
+                        className="flex-none w-[70vw] max-w-[240px] md:w-[280px] md:max-w-none snap-start cursor-pointer group border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1"
                     >
-                        <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer">
+                        <div className="relative w-full aspect-[4/3] bg-muted">
                             {event.image_url ? (
                                 <img
                                     src={event.image_url}
@@ -68,17 +70,18 @@ export default function TrendingEvents() {
                             )}
                         </div>
 
-                        {/* Info — Gestalt Proximity: apilado hermético = una sola unidad */}
-                        <h4 className="font-sans font-bold text-sm tracking-zen group-hover:text-accent transition-colors truncate">
-                            {event.title}
-                        </h4>
-                        <p className="text-[10px] text-muted-foreground font-sans mt-0.5 truncate">
-                            {event.venue} · {event.date}
-                        </p>
-                        <p className="font-sans font-bold text-sm mt-1">
-                            {event.price}
-                            <span className="text-[9px] font-normal text-muted-foreground uppercase tracking-widest ml-1">CLP</span>
-                        </p>
+                        <div className="p-3">
+                            <h4 className="font-sans font-bold text-sm tracking-zen group-hover:text-accent transition-colors truncate">
+                                {event.title}
+                            </h4>
+                            <p className="text-[10px] text-muted-foreground font-sans mt-0.5 truncate">
+                                {event.venue} · {event.date}
+                            </p>
+                            <p className="font-sans font-bold text-sm mt-1">
+                                {event.price}
+                                <span className="text-[9px] font-normal text-muted-foreground uppercase tracking-widest ml-1">CLP</span>
+                            </p>
+                        </div>
                     </div>
                 ))}
             </div>
