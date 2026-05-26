@@ -81,6 +81,10 @@ DB_NAME=quorum_db
 DB_USER=quorum_user
 DB_PASSWORD=yourpassword
 PORT=3000
+
+CLOUDINARY_CLOUD_NAME=dn8wc28uw
+CLOUDINARY_API_KEY=893846775147813
+CLOUDINARY_API_SECRET=uYcnToM-JxmqdvVjUDjlvPg5cCI
 ```
 
 Inicia el servidor backend:
