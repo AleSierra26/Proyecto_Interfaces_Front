@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react';
 import { User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import QuorumLogo from '../assets/quorumlogo.png';
+import QuorumLogoLight from '../assets/quorumlogolight.png';
+import QuorumLogoDark from '../assets/quorumlogodark.png';
+import ThemeToggle from './ThemeToggle.jsx';
 
 /* Responsive Design: desktop inline nav replaces mobile bottom nav */
 const desktopNavItems = [
@@ -13,6 +16,24 @@ export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
     const currentUser = localStorage.getItem('currentUser');
+    const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem('theme') || 'light');
+
+    useEffect(() => {
+        const syncTheme = () => {
+            setCurrentTheme(localStorage.getItem('theme') || 'light');
+        };
+
+        syncTheme();
+        window.addEventListener('storage', syncTheme);
+
+        return () => window.removeEventListener('storage', syncTheme);
+    }, []);
+
+    const handleThemeToggle = () => {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        localStorage.setItem('theme', savedTheme);
+        setCurrentTheme(savedTheme);
+    };
 
     const home = currentUser ? '/home' : '/';
 
@@ -25,7 +46,11 @@ export default function Header() {
                     className='flex items-center gap-2.5 cursor-pointer flex-shrink-0'
                     onClick={() => navigate(home)}
                 >
-                    <img src={QuorumLogo} alt="Quorum" className="w-9 h-9" />
+                    {currentTheme === 'light' ? (
+                        <img src={QuorumLogoLight} alt="Logo Quorum" className="w-9 h-9" />
+                    ) : (
+                        <img src={QuorumLogoDark} alt="Logo Quorum" className="w-9 h-9" />
+                    )}
                     <span className='font-sans font-bold text-lg tracking-zen uppercase hidden sm:block'>
                         Quorum
                     </span>
@@ -67,15 +92,18 @@ export default function Header() {
                 </h1>
 
                 {/* Profile button — always right-aligned */}
-                {currentUser && (
-                    <button
-                        className='ml-auto w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 inline-btn'
-                        aria-label='Perfil'
-                        onClick={() => navigate('/profile')}
-                    >
-                        <User className='w-4 h-4 text-primary-foreground' />
-                    </button>
-                )}
+                <div className='flex items-center ml-auto gap-2'>
+                    <ThemeToggle onToggle={handleThemeToggle} />
+                    {currentUser && (
+                        <button
+                            className='ml-auto w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 inline-btn'
+                            aria-label='Perfil'
+                            onClick={() => navigate('/profile')}
+                        >
+                            <User className='w-4 h-4 text-primary-foreground' />
+                        </button>
+                    )}
+                </div>
             </div>
         </header>
     );
