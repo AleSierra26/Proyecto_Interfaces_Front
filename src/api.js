@@ -121,6 +121,15 @@ export async function updateProfile(userId, data) {
     return res.json();
 }
 
+export async function updateBalance(userId, newBalance) {
+    const res = await fetch(`${API}/users/${userId}/balance`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newBalance }),
+    });
+    return res.json();
+}
+
 export async function uploadEventImage(eventCode, file) {
     const formData = new FormData();
     formData.append('image', file);

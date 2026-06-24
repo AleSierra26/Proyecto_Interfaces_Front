@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { User, MapPin, Calendar, Clock, CheckCircle, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { purchaseTicket, getEvent, getEventResales, purchaseResale, getMyTickets } from '../api';
+import { purchaseTicket, getEvent, getEventResales, purchaseResale, getMyTickets, updateBalance } from '../api';
 
 export default function SpecificEvent() {
     const navigate = useNavigate();
@@ -17,6 +17,8 @@ export default function SpecificEvent() {
     const [hasTicket, setHasTicket] = useState(false);
     const [descExpanded, setDescExpanded] = useState(false);
     const [ownsEvent, setOwnsEvent] = useState(false);
+    const [saveError, setSaveError] = useState('');
+    const [success, setSuccess] = useState(false);
 
     useEffect(() => {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -57,15 +59,32 @@ export default function SpecificEvent() {
             return;
         }
 
-        navigate('/payment', {
-            state: {
-                eventId,
-                eventTitle: event.title,
-                eventVenue: event.venue,
-                eventDate: event.date,
-                price: event.price,
+        if (currentUser.balance < event.price) {
+            alert('No tienes suficientes fondos! Por favor, recarga tu cuenta antes de comprar un ticket.');
+            return;
+        }
+
+        try {
+            const ticketData = await purchaseTicket(currentUser.id, eventId);
+            if (ticketData.error) {
+                setSaveError(ticketData.error);
+                return;
             }
-        });
+
+            const balanceData = await updateBalance(currentUser.id, currentUser.balance - event.price);
+            if (balanceData.error) {
+                setSaveError(balanceData.error);
+                return;
+            }
+
+            const updatedUser = { ...currentUser, balance: currentUser.balance - event.price };
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+            setSaveError('');
+            setHasTicket(true);
+            setSuccess(true);
+        } catch (error) {
+            setSaveError('No se pudo completar la compra.');
+        }
     };
 
     const handlePurchaseResale = async (resaleId) => {
@@ -75,17 +94,86 @@ export default function SpecificEvent() {
             return;
         }
 
-        navigate('/payment', {
-            state: {
-                eventId,
-                eventTitle: event.title,
-                eventVenue: event.venue,
-                eventDate: event.date,
-                price: resales.find((r) => r.id === resaleId)?.price,
-                resaleId,
+        if (currentUser.balance < event.price) {
+            alert('No tienes suficientes fondos! Por favor, recarga tu cuenta antes de comprar un ticket.');
+            return;
+        }
+
+        try {
+            const resaleData = await purchaseResale(resaleId, currentUser.id);
+            if (resaleData.error) {
+                setSaveError(resaleData.error);
+                return;
             }
-        });
+
+            const balanceData = await updateBalance(currentUser.id, currentUser.balance - event.price);
+            if (balanceData.error) {
+                setSaveError(balanceData.error);
+                return;
+            }
+
+            const updatedUser = { ...currentUser, balance: currentUser.balance - event.price };
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+            setSaveError('');
+            setHasTicket(true);
+            setSuccess(true);
+        } catch (error) {
+            setSaveError('No se pudo completar la compra.');
+        }
     };
+
+    if (success) {
+        return (
+            <div className="min-h-screen bg-background max-w-md mx-auto flex flex-col items-center justify-center px-6 gap-5 text-center">
+                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
+                    <CheckCircle className="w-8 h-8 text-primary-foreground" />
+                </div>
+                <div>
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                        Pago confirmado
+                    </p>
+                    <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
+                        ¡Ticket comprado!
+                    </h2>
+                    <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
+                        Verás tu ticket en la sección "Mis Tickets".
+                    </h2>
+                </div>
+                <div className="w-full border border-border rounded-[10px] bg-card p-4 text-left space-y-3">
+                    <div>
+                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Evento</p>
+                        <p className="text-sm font-sans font-medium text-foreground mt-0.5">{event.title}</p>
+                    </div>
+                    <div className="flex gap-6">
+                        <div>
+                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Lugar</p>
+                            <p className="text-xs font-sans text-foreground mt-0.5">{event.venue}</p>
+                        </div>
+                        <div>
+                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Fecha</p>
+                            <p className="text-xs font-sans text-foreground mt-0.5">{event.date}</p>
+                        </div>
+                    </div>
+                    <div className="border-t border-border pt-3 flex items-center justify-between">
+                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Total pagado</p>
+                        <p className="font-sans font-bold text-base">${event.price.toLocaleString()} CLP</p>
+                    </div>
+                </div>
+                <button
+                    onClick={() => navigate('/my-tickets')}
+                    className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                >
+                    Ver mis tickets
+                </button>
+                <button
+                    onClick={() => navigate('/home')}
+                    className="w-full py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                >
+                    Volver al inicio
+                </button>
+            </div>
+        );
+    }
 
     if (loading) {
         return (

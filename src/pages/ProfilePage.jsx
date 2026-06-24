@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Pencil, LogOut, Camera, Check, X } from 'lucide-react';
+import { Pencil, LogOut, Camera, Check, X, CircleDollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { updateProfile, uploadAvatar } from '../api';
 
@@ -104,6 +104,16 @@ export default function ProfilePage() {
         }
     };
 
+    const handleAddCoins = async () => {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            navigate('/auth');
+            return;
+        }
+
+        navigate('/payment');
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('currentUser');
         navigate('/');
@@ -165,15 +175,29 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Name & meta */}
-                <h2 className="font-sans font-bold text-xl tracking-widest">
-                    {displayName}
-                </h2>
-                <p className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                    Miembro desde {user.member_since}
-                </p>
-                <p className="mt-0.5 text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                    {user.email}
-                </p>
+                <div className="flex flex-col items-center gap-2.5 text-center">
+                    <h2 className="font-sans font-bold text-xl tracking-widest">
+                        {displayName}
+                    </h2>
+                    <div className="flex items-center justify-center gap-2">
+                        <h2 className="font-sans font-bold text-l tracking-widest">Mis QuorumCoins: {user.balance} </h2>
+                    </div>
+                    <div>
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            Miembro desde {user.member_since}
+                        </p>
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            {user.email}
+                        </p>
+                    </div>
+                    <button
+                        onClick={handleAddCoins}
+                        className="flex items-center gap-1.5 px-3 py-2 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                    >
+                        <CircleDollarSign className="w-4 h-4" />
+                        Añadir QuorumCoins
+                    </button>
+                </div>
             </section>
 
             {/* Edit profile form */}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CreditCard, User, Lock, Calendar, ChevronLeft, CheckCircle } from 'lucide-react';
-import { purchaseTicket, purchaseResale } from '../api';
+import { CreditCard, User, Lock, Calendar, ChevronLeft, CheckCircle, CircleDollarSign } from 'lucide-react';
+import { updateBalance } from '../api';
 
 function FieldLabel({ children }) {
     return (
@@ -43,18 +43,17 @@ export default function PaymentPage() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Event/resale info passed via navigate state from SpecificEvent
-    const { eventId, eventTitle, eventVenue, eventDate, price, resaleId } = location.state || {};
     // pricing breakdown
-    const ticketPrice = Number(price) || 0;
-    const serviceFee = Math.round(ticketPrice * 0.05); // 5% service fee
-    const totalToPay = ticketPrice + serviceFee;
+    const [billPrice, setBillPrice] = useState(0);
+    const serviceFee = Math.round(billPrice * 0.05); // 5% service fee
+    const totalToPay = billPrice + serviceFee;
 
     const [form, setForm] = useState({
         cardNumber: '',
         cardName: '',
         expiry: '',
         cvv: '',
+        quorumCoins: '',
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -65,6 +64,10 @@ export default function PaymentPage() {
         if (name === 'cardNumber') value = formatCardNumber(value);
         if (name === 'expiry') value = formatExpiry(value);
         if (name === 'cvv') value = value.replace(/\D/g, '').slice(0, 3);
+        if (name === 'quorumCoins') {
+            value = value.replace(/\D/g, '');
+            setBillPrice(Number(value));
+        } 
         setForm((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: '' }));
     };
@@ -79,6 +82,8 @@ export default function PaymentPage() {
             newErrors.expiry = 'Fecha de vencimiento inválida.';
         if (form.cvv.length != 3)
             newErrors.cvv = 'CVV inválido.';
+        if (!form.quorumCoins.trim())
+            newErrors.quorumCoins = 'Ingresa la cantidad de QuorumCoins.';
         return newErrors;
     };
 
@@ -98,11 +103,7 @@ export default function PaymentPage() {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
         let data;
-        if (resaleId) {
-            data = await purchaseResale(resaleId, currentUser.id);
-        } else {
-            data = await purchaseTicket(currentUser.id, eventId);
-        }
+        data = await updateBalance(currentUser.id, currentUser.balance + billPrice);
 
         setLoading(false);
 
@@ -110,7 +111,7 @@ export default function PaymentPage() {
             setErrors({ general: data.error });
             return;
         }
-
+        localStorage.setItem('currentUser', JSON.stringify({...data.user, balance: currentUser.balance + billPrice}));
         setSuccess(true);
     };
 
@@ -126,37 +127,17 @@ export default function PaymentPage() {
                         Pago confirmado
                     </p>
                     <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
-                        ¡Ticket comprado!
+                        ¡QuorumCoins compradas!
                     </h2>
-                    <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
-                        Verás tu ticket en la sección "Mis Tickets".
+                    <h2 className="font-sans font-bold text-md tracking-widest mt-2">
+                        Verás tu nuevo balance de QuorumCoins en tu perfil.
                     </h2>
-                </div>
-                <div className="w-full border border-border rounded-[10px] bg-card p-4 text-left space-y-3">
-                    <div>
-                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Evento</p>
-                        <p className="text-sm font-sans font-medium text-foreground mt-0.5">{eventTitle}</p>
-                    </div>
-                    <div className="flex gap-6">
-                        <div>
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Lugar</p>
-                            <p className="text-xs font-sans text-foreground mt-0.5">{eventVenue}</p>
-                        </div>
-                        <div>
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Fecha</p>
-                            <p className="text-xs font-sans text-foreground mt-0.5">{eventDate}</p>
-                        </div>
-                    </div>
-                    <div className="border-t border-border pt-3 flex items-center justify-between">
-                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Total pagado</p>
-                        <p className="font-sans font-bold text-base">${totalToPay?.toLocaleString()} CLP</p>
-                    </div>
                 </div>
                 <button
-                    onClick={() => navigate('/my-tickets')}
+                    onClick={() => navigate('/profile')}
                     className="w-full py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                 >
-                    Ver mis tickets
+                    Ver mi perfil
                 </button>
                 <button
                     onClick={() => navigate('/home')}
@@ -192,19 +173,21 @@ export default function PaymentPage() {
 
                 {/* Order summary */}
                 <div className="border border-border rounded-[10px] bg-card p-4 mb-6 space-y-2">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
-                        Resumen de compra
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
+                        ¿Cuántas QuorumCoins quieres comprar?
                     </p>
-                    <div className="flex items-start justify-between gap-4">
-                        <div>
-                            <p className="font-sans font-bold text-sm tracking-widest">{eventTitle}</p>
-                            <p className="text-xs text-muted-foreground font-sans mt-0.5">{eventVenue}</p>
-                            <p className="text-xs text-muted-foreground font-sans">{eventDate}</p>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                            <p className="font-sans font-bold text-lg">${price?.toLocaleString()}</p>
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">CLP</p>
-                        </div>
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
+                        (Recuerda que 1 QuorumCoin = 1 CLP)
+                    </p>
+                    <div>
+                        <InputField
+                            icon={CircleDollarSign}
+                            name="quorumCoins"
+                            value={form.quorumCoins}
+                            onChange={handleChange}
+                            placeholder="0"
+                            inputMode="numeric"
+                        />
                     </div>
                 </div>
 
@@ -290,10 +273,10 @@ export default function PaymentPage() {
                     <div className="border-t border-border pt-4">
                         <div className="flex items-center justify-between mb-2">
                             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                                Precio del ticket
+                                Valor QuorumCoins a comprar
                             </p>
                             <p className="font-sans font-medium text-sm">
-                                ${ticketPrice.toLocaleString()} CLP
+                                ${form.quorumCoins ? parseInt(form.quorumCoins) : 0} CLP
                             </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
