@@ -1,7 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { QrCode, ArrowLeftRight, Ticket } from 'lucide-react';
+import { QrCode, ArrowLeftRight, Ticket, ImageOff } from 'lucide-react';
 import { getMyTickets, listForResale } from '../api';
+
+function EventSkeleton() {
+    return (
+        <div className="border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1">
+            <div className="skeleton w-full aspect-[4/3]" />
+            <div className="p-3">
+                <div className="skeleton h-3.5 w-full rounded mb-1.5" />
+                <div className="skeleton h-3 w-1/2 rounded mb-1.5" />
+                <div className="skeleton h-3.5 w-1/3 rounded" />
+            </div>
+        </div>
+    );
+}
 
 export default function MyTickets() {
 
@@ -14,6 +27,7 @@ export default function MyTickets() {
     const [resaleError, setResaleError] = useState('');
     const [resaleLoading, setResaleLoading] = useState(false);
     const [resaleSuccess, setResaleSuccess] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const handleQrOpen = (ticket) => {
         setSelectedTicket(ticket);
@@ -59,12 +73,18 @@ export default function MyTickets() {
     };
 
     useEffect(() => {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (!currentUser) return;
+        const loadTickets = async () => {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
 
-        getMyTickets(currentUser.id).then((data) => {
+            setLoading(true);
+            const data = await getMyTickets(currentUser.id);
             setTickets(data.tickets || []);
-        });
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a short delay for better UX
+            setLoading(false);
+        };
+
+        loadTickets();
     }, []);
 
     return (
@@ -96,159 +116,172 @@ export default function MyTickets() {
                     )}
                 </div>
 
-                {/*
-                 * Empty state — Feedback + Affordance: el estado vacío es
-                 * informativo y guía al usuario hacia su próxima acción.
-                 */}
-                {tickets.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-20 gap-3">
-                        <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
-                            <Ticket className="w-6 h-6 text-muted-foreground/40" aria-hidden="true" />
-                        </div>
-                        <p className="font-sans font-bold text-lg tracking-widest text-foreground">
-                            Sin tickets aún
-                        </p>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
-                            Compra tu primer ticket y aparecerá aquí
-                        </p>
-                        <button
-                            onClick={() => navigate('/home')}
-                            className="mt-2 px-6 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
-                        >
-                            Explorar eventos
-                        </button>
+                {loading ? (
+                    <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
+                        {Array.from({ length: 4 }).map((_, index) => (
+                            <EventSkeleton key={index} />
+                        ))}
                     </div>
-                )}
-
-                {/*
-                 * Ticket cards — Gestalt Closure: el borde redondeado y
-                 * la línea de puntos entre la imagen y la info evocan
-                 * visualmente la forma de un ticket físico, creando una
-                 * unidad perceptual reconocible.
-                 * Gestalt Similarity: todas las cards comparten la misma
-                 * estructura → el usuario sabe cómo leer cada una.
-                 */}
-                <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-                    {tickets.map((ticket) => (
-                        <div key={ticket.id} className="border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1">
-
-                            {/* Cover image */}
-                            <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
-                                onClick={() => navigate(`/event/${ticket.event_id}`)}>
-                                {ticket.event_image_url ? (
-                                    <img
-                                        src={ticket.event_image_url}
-                                        alt={ticket.event_title}
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/*
-                             * Perforación — Gestalt Closure: la serie de puntos
-                             * imita la línea de corte de un ticket físico. El
-                             * usuario reconoce el patrón sin instrucción verbal.
-                             */}
-                            <div className="flex items-center gap-0">
-                                <div className="w-4 h-4 rounded-full bg-background border border-border -ml-2 flex-shrink-0" />
-                                <div className="flex-1 border-t-2 border-dashed border-border mx-1" />
-                                <div className="w-4 h-4 rounded-full bg-background border border-border -mr-2 flex-shrink-0" />
-                            </div>
-
-                            {/* Ticket info */}
-                            <div className="p-4">
-
-                                {/* Title & price */}
-                                <div
-                                    onClick={() => navigate(`/event/${ticket.event_id}`)}
-                                    className="flex items-start justify-between gap-4 cursor-pointer mb-4"
+                ) : (
+                    <>
+                        {/*
+                         * Empty state — Feedback + Affordance: el estado vacío es
+                         * informativo y guía al usuario hacia su próxima acción.
+                         */}
+                        {tickets.length === 0 && (
+                            <div className="flex flex-col items-center justify-center py-20 gap-3">
+                                <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
+                                    <Ticket className="w-6 h-6 text-muted-foreground/40" aria-hidden="true" />
+                                </div>
+                                <p className="font-sans font-bold text-lg tracking-widest text-foreground">
+                                    Sin tickets aún
+                                </p>
+                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
+                                    Compra tu primer ticket y aparecerá aquí
+                                </p>
+                                <button
+                                    onClick={() => navigate('/home')}
+                                    className="mt-2 px-6 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                                 >
-                                    <div className="flex-1">
-                                        <h4 className="font-sans font-bold text-base tracking-widest">
-                                            {ticket.event_title}
-                                        </h4>
-                                        <p className="text-xs text-muted-foreground font-sans mt-0.5">
-                                            {ticket.event_venue}
-                                        </p>
-                                    </div>
-                                    <div className="text-right flex-shrink-0">
-                                        <p className="font-sans font-bold text-base">
-                                            ${ticket.event_price?.toLocaleString()}
-                                        </p>
-                                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                            CLP
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Cancelled badge */}
-                                {ticket.status === 'cancelled' && (
-                                    <div className="flex items-center gap-2 bg-muted rounded-[10px] px-3 py-2 mb-3">
-                                        <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
-                                            ⚠ Este evento fue cancelado · Ticket inválido
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* Date & time */}
-                                <div className="flex gap-6 border-t border-border pt-3 mb-4">
-                                    <div>
-                                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                            Fecha
-                                        </p>
-                                        <p className="text-xs font-sans text-foreground mt-0.5">
-                                            {ticket.event_date}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                            Hora
-                                        </p>
-                                        <p className="text-xs font-sans text-foreground mt-0.5">
-                                            {ticket.event_time}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/*
-                                 * Actions — Visual Hierarchy: Ver QR es la acción
-                                 * primaria (lo que el usuario necesita en la entrada),
-                                 * Revender es secundaria (contorno).
-                                 */}
-                                <div className="flex gap-2 border-t border-border pt-4">
-                                    <button
-                                        onClick={() => handleQrOpen(ticket)}
-                                        disabled={ticket.status === 'cancelled'}
-                                        className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-opacity ${
-                                            ticket.status === 'cancelled'
-                                                ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                                                : 'bg-primary text-primary-foreground hover:opacity-90'
-                                        }`}
-                                    >
-                                        <QrCode className="w-3.5 h-3.5" aria-hidden="true" />
-                                        Mi QR
-                                    </button>
-                                    <button
-                                        onClick={() => handleResaleOpen(ticket)}
-                                        disabled={ticket.status === 'cancelled'}
-                                        className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 border font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-colors ${
-                                            ticket.status === 'cancelled'
-                                                ? 'border-border text-muted-foreground cursor-not-allowed'
-                                                : 'border-border text-muted-foreground hover:border-foreground hover:text-foreground'
-                                        }`}
-                                    >
-                                        <ArrowLeftRight className="w-3.5 h-3.5" aria-hidden="true" />
-                                        Revender
-                                    </button>
-                                </div>
+                                    Explorar eventos
+                                </button>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        )}
+
+                        {tickets.length > 0 && (
+                            <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
+                                {/*
+                                 * Ticket cards — Gestalt Closure: el borde redondeado y
+                                 * la línea de puntos entre la imagen y la info evocan
+                                 * visualmente la forma de un ticket físico, creando una
+                                 * unidad perceptual reconocible.
+                                 * Gestalt Similarity: todas las cards comparten la misma
+                                 * estructura → el usuario sabe cómo leer cada una.
+                                 */}
+                                {tickets.map((ticket) => (
+                                    <div key={ticket.id} className="border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1">
+                                        {/* Cover image */}
+                                        <div
+                                            className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
+                                            onClick={() => navigate(`/event/${ticket.event_id}`)}
+                                        >
+                                            {ticket.event_image_url ? (
+                                                <img
+                                                    src={ticket.event_image_url}
+                                                    alt={ticket.event_title}
+                                                    className="absolute inset-0 w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                    <ImageOff className="text-muted-foreground/50" />
+                                                    <span className="text-muted-foreground/50 text-sm font-sans">No hay imagen para este evento</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/*
+                                         * Perforación — Gestalt Closure: la serie de puntos
+                                         * imita la línea de corte de un ticket físico. El
+                                         * usuario reconoce el patrón sin instrucción verbal.
+                                         */}
+                                        <div className="flex items-center gap-0">
+                                            <div className="w-4 h-4 rounded-full bg-background border border-border -ml-2 flex-shrink-0" />
+                                            <div className="flex-1 border-t-2 border-dashed border-border mx-1" />
+                                            <div className="w-4 h-4 rounded-full bg-background border border-border -mr-2 flex-shrink-0" />
+                                        </div>
+
+                                        {/* Ticket info */}
+                                        <div className="p-4">
+                                            {/* Title & price */}
+                                            <div
+                                                onClick={() => navigate(`/event/${ticket.event_id}`)}
+                                                className="flex items-start justify-between gap-4 cursor-pointer mb-4"
+                                            >
+                                                <div className="flex-1">
+                                                    <h4 className="font-sans font-bold text-base tracking-widest">
+                                                        {ticket.event_title}
+                                                    </h4>
+                                                    <p className="text-xs text-muted-foreground font-sans mt-0.5">
+                                                        {ticket.event_venue}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right flex-shrink-0">
+                                                    <p className="font-sans font-bold text-base">
+                                                        {ticket.event_price?.toLocaleString()}
+                                                    </p>
+                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                        Coins
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Cancelled badge */}
+                                            {ticket.status === 'cancelled' && (
+                                                <div className="flex items-center gap-2 bg-muted rounded-[10px] px-3 py-2 mb-3">
+                                                    <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
+                                                        ⚠ Este evento fue cancelado · Ticket inválido
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {/* Date & time */}
+                                            <div className="flex gap-6 border-t border-border pt-3 mb-4">
+                                                <div>
+                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                        Fecha
+                                                    </p>
+                                                    <p className="text-xs font-sans text-foreground mt-0.5">
+                                                        {ticket.event_date}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                        Hora
+                                                    </p>
+                                                    <p className="text-xs font-sans text-foreground mt-0.5">
+                                                        {ticket.event_time}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/*
+                                             * Actions — Visual Hierarchy: Ver QR es la acción
+                                             * primaria (lo que el usuario necesita en la entrada),
+                                             * Revender es secundaria (contorno).
+                                             */}
+                                            <div className="flex gap-2 border-t border-border pt-4">
+                                                <button
+                                                    onClick={() => handleQrOpen(ticket)}
+                                                    disabled={ticket.status === 'cancelled'}
+                                                    className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-opacity ${
+                                                        ticket.status === 'cancelled'
+                                                            ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                                                            : 'bg-primary text-primary-foreground hover:opacity-90'
+                                                    }`}
+                                                >
+                                                    <QrCode className="w-3.5 h-3.5" aria-hidden="true" />
+                                                    Mi QR
+                                                </button>
+                                                <button
+                                                    onClick={() => handleResaleOpen(ticket)}
+                                                    disabled={ticket.status === 'cancelled'}
+                                                    className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 border font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-colors ${
+                                                        ticket.status === 'cancelled'
+                                                            ? 'border-border text-muted-foreground cursor-not-allowed'
+                                                            : 'border-border text-muted-foreground hover:border-foreground hover:text-foreground'
+                                                    }`}
+                                                >
+                                                    <ArrowLeftRight className="w-3.5 h-3.5" aria-hidden="true" />
+                                                    Revender
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
 
             {/* QR Modal */}
@@ -325,10 +358,9 @@ export default function MyTickets() {
 
                                     <div className="mb-4">
                                         <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
-                                            Tu precio de venta (CLP)
+                                            Tu precio de venta (Coins)
                                         </label>
                                         <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-background focus-within:border-foreground transition-colors">
-                                            <span className="text-muted-foreground font-sans text-sm">$</span>
                                             <input
                                                 type="number"
                                                 min="1"
@@ -351,11 +383,11 @@ export default function MyTickets() {
                                                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans"
                                             />
                                             <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                                                CLP
+                                                Coins
                                             </span>
                                         </div>
                                         <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans mt-1.5">
-                                            Precio original: ${selectedTicket.event_price?.toLocaleString()} CLP
+                                            Precio original: {selectedTicket.event_price?.toLocaleString()} Coins
                                         </p>
                                     </div>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, MapPin, Calendar, Clock, CheckCircle, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react';
+import { User, MapPin, Calendar, Clock, CheckCircle, ChevronLeft, ChevronDown, ChevronUp, ImageOff } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { purchaseTicket, getEvent, getEventResales, purchaseResale, getMyTickets, updateBalance } from '../api';
 
@@ -277,10 +277,10 @@ export default function SpecificEvent() {
                                             <div className="flex items-center gap-3">
                                                 <div className="text-right">
                                                     <p className="font-sans font-bold text-base">
-                                                        ${resale.price.toLocaleString()}
+                                                        {resale.price.toLocaleString()}
                                                     </p>
                                                     <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                                        CLP
+                                                        Coins
                                                     </p>
                                                 </div>
                                                 <button
@@ -318,8 +318,9 @@ export default function SpecificEvent() {
                             className="absolute inset-0 w-full h-full object-cover"
                         />
                     ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <ImageOff className="text-muted-foreground/50" />
+                            <span className="text-muted-foreground/50 text-sm font-sans">No hay imagen para este evento</span>
                         </div>
                     )}
                 </div>
@@ -349,11 +350,11 @@ export default function SpecificEvent() {
                     </div>
                     <div className="text-right flex-shrink-0">
                         <p className="font-sans font-bold text-2xl">
-                            {event.price === 0 ? 'GRATIS' : `$${event.price.toLocaleString()}`}
+                            {event.price === 0 ? 'GRATIS' : `${event.price.toLocaleString()}`}
                         </p>
                         {event.price > 0 && (
                             <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                CLP
+                                Coins
                             </p>
                         )}
                     </div>

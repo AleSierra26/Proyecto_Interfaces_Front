@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Calendar, Clock, Users, DollarSign, Tag, AlignLeft } from 'lucide-react';
+import { MapPin, Calendar, Clock, Users, DollarSign, Tag, AlignLeft, CircleDollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { createEvent } from '../api';
@@ -232,9 +232,9 @@ export default function CreateEventPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <FieldLabel>Precio (CLP)</FieldLabel>
+                            <FieldLabel>Precio (Coins)</FieldLabel>
                             <InputField
-                                icon={DollarSign}
+                                icon={CircleDollarSign}
                                 type="number"
                                 name="price"
                                 value={form.price}

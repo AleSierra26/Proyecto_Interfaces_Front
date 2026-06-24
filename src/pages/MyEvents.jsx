@@ -1,7 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Plus, ScanLine, Pencil, Trash2, CalendarDays, AlertTriangle, Link, Check, Users, User, X } from 'lucide-react';
+import { Plus, ScanLine, Pencil, Trash2, CalendarDays, AlertTriangle, Link, Check, Users, User, X, ImageOff } from 'lucide-react';
 import { getMyEvents, deleteEvent, getEventAttendees } from '../api';
+
+function EventSkeleton() {
+    return (
+        <div className="border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1">
+            <div className="skeleton w-full aspect-[4/3]" />
+            <div className="p-3">
+                <div className="skeleton h-3.5 w-full rounded mb-1.5" />
+                <div className="skeleton h-3 w-1/2 rounded mb-1.5" />
+                <div className="skeleton h-3.5 w-1/3 rounded" />
+            </div>
+        </div>
+    );
+}
 
 export default function MyEvents() {
     const navigate = useNavigate();
@@ -15,12 +28,16 @@ export default function MyEvents() {
     const [attendees, setAttendees] = useState([]);
     const [attendeesLoading, setAttendeesLoading] = useState(false);
     const [attendeesEvent, setAttendeesEvent] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadEvents = async () => {
+            setLoading(true);
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             const data = await getMyEvents(currentUser.id);
             setEvents(data.events || []);
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a short delay for better UX
+            setLoading(false);
         };
         loadEvents();
     }, []);
@@ -246,159 +263,168 @@ export default function MyEvents() {
                 </section>
 
                 <section className="mt-6 px-4">
-                    {events.length > 0 && (
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
-                            Tienes {events.length} evento{events.length !== 1 ? 's' : ''}
-                        </p>
-                    )}
-
-                    {/* Empty state */}
-                    {events.length === 0 && (
-                        <div className="flex flex-col items-center justify-center py-20 gap-3">
-                            <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
-                                <CalendarDays className="w-6 h-6 text-muted-foreground/40" />
-                            </div>
-                            <p className="font-sans font-bold text-lg tracking-widest text-foreground">
-                                Sin eventos aún
-                            </p>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
-                                Crea tu primer evento y aparecerá aquí
-                            </p>
-                            <button
-                                onClick={() => navigate('/create-event')}
-                                className="mt-2 flex items-center gap-1.5 px-6 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
-                            >
-                                <Plus className="w-3.5 h-3.5" />
-                                Crear evento
-                            </button>
+                    {loading ? (
+                        <div className="space-y-3 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <EventSkeleton key={i} />
+                            ))}
                         </div>
-                    )}
+                    ) : (
+                        <>
+                            {events.length > 0 && (
+                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
+                                    Tienes {events.length} evento{events.length !== 1 ? 's' : ''}
+                                </p>
+                            )}
 
-                    <div className="space-y-5 md:grid md:grid-cols-2 md:gap-5 md:space-y-0">
-                        {events.map((event) => (
-                            <div key={event.code} className="border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1">
+                            {/* Empty state */}
+                            {events.length === 0 && (
+                                <div className="flex flex-col items-center justify-center py-20 gap-3">
+                                    <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
+                                        <CalendarDays className="w-6 h-6 text-muted-foreground/40" />
+                                    </div>
+                                    <p className="font-sans font-bold text-lg tracking-widest text-foreground">
+                                        Sin eventos aún
+                                    </p>
+                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
+                                        Crea tu primer evento y aparecerá aquí
+                                    </p>
+                                    <button
+                                        onClick={() => navigate('/create-event')}
+                                        className="mt-2 flex items-center gap-1.5 px-6 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                                    >
+                                        <Plus className="w-3.5 h-3.5" />
+                                        Crear evento
+                                    </button>
+                                </div>
+                            )}
 
-                                {/* Cover image with copy link button overlaid */}
-                                <div
-                                    onClick={() => navigate(`/event/${event.code}`)}
-                                    className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
-                                >
-                                    <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer">
-                                        {event.image_url ? (
-                                            <img
-                                                src={event.image_url}
-                                                alt={event.title}
-                                                className="absolute inset-0 w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
+                            <div className="space-y-5 md:grid md:grid-cols-2 md:gap-5 md:space-y-0">
+                                {events.map((event) => (
+                                    <div key={event.code} className="border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1">
+                                        {/* Cover image with copy link button overlaid */}
+                                        <div
+                                            onClick={() => navigate(`/event/${event.code}`)}
+                                            className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
+                                        >
+                                            <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer">
+                                                {event.image_url ? (
+                                                    <img
+                                                        src={event.image_url}
+                                                        alt={event.title}
+                                                        className="absolute inset-0 w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                        <ImageOff className="text-muted-foreground/50" />
+                                                        <span className="text-muted-foreground/50 text-sm font-sans">No hay imagen para este evento</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
 
-                                    {/* Copy link button — top right corner of image */}
-                                    <button
-                                        onClick={(e) => handleCopyLink(e, event.code)}
-                                        className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-background/90 backdrop-blur-sm border border-border text-foreground font-sans font-medium text-[9px] uppercase tracking-widest rounded-[10px] hover:bg-background transition-all"
-                                        aria-label="Copiar enlace del evento"
-                                    >
-                                        {copiedCode === event.code ? (
-                                            <>
-                                                <Check className="w-3 h-3" />
-                                                Copiado
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Link className="w-3 h-3" />
-                                                Compartir
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-
-                                <div className="p-4">
-
-                                    {/* Title & price */}
-                                    <div
-                                        onClick={() => navigate(`/event/${event.code}`)}
-                                        className="flex items-start justify-between gap-4 cursor-pointer mb-4"
-                                    >
-                                        <div className="flex-1">
-                                            <h4 className="font-sans font-bold text-base tracking-widest">
-                                                {event.title}
-                                            </h4>
-                                            <p className="text-xs text-muted-foreground font-sans mt-0.5">
-                                                {event.venue}
-                                            </p>
+                                            {/* Copy link button — top right corner of image */}
+                                            <button
+                                                onClick={(e) => handleCopyLink(e, event.code)}
+                                                className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-background/90 backdrop-blur-sm border border-border text-foreground font-sans font-medium text-[9px] uppercase tracking-widest rounded-[10px] hover:bg-background transition-all"
+                                                aria-label="Copiar enlace del evento"
+                                            >
+                                                {copiedCode === event.code ? (
+                                                    <>
+                                                        <Check className="w-3 h-3" />
+                                                        Copiado
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Link className="w-3 h-3" />
+                                                        Compartir
+                                                    </>
+                                                )}
+                                            </button>
                                         </div>
-                                        <div className="text-right flex-shrink-0">
-                                            <p className="font-sans font-bold text-base">
-                                                {event.price === 0 ? 'GRATIS' : `$${event.price?.toLocaleString()}`}
-                                            </p>
-                                            {event.price > 0 && (
-                                                <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                                    CLP
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
 
-                                    {/* Date & time */}
-                                    <div className="flex gap-6 border-t border-border pt-3 mb-4">
-                                        <div>
-                                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                                Fecha
-                                            </p>
-                                            <p className="text-xs font-sans text-foreground mt-0.5">
-                                                {event.date}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                                                Hora
-                                            </p>
-                                            <p className="text-xs font-sans text-foreground mt-0.5">
-                                                {event.time}
-                                            </p>
-                                        </div>
-                                    </div>
+                                        <div className="p-4">
+                                            {/* Title & price */}
+                                            <div
+                                                onClick={() => navigate(`/event/${event.code}`)}
+                                                className="flex items-start justify-between gap-4 cursor-pointer mb-4"
+                                            >
+                                                <div className="flex-1">
+                                                    <h4 className="font-sans font-bold text-base tracking-widest">
+                                                        {event.title}
+                                                    </h4>
+                                                    <p className="text-xs text-muted-foreground font-sans mt-0.5">
+                                                        {event.venue}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right flex-shrink-0">
+                                                    <p className="font-sans font-bold text-base">
+                                                        {event.price === 0 ? 'GRATIS' : `${event.price?.toLocaleString()}`}
+                                                    </p>
+                                                    {event.price > 0 && (
+                                                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                            Coins
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
 
-                                    {/* Action buttons */}
-                                    <button
-                                        onClick={() => navigate(`/scanner/${event.code}`)}
-                                        className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
-                                    >
-                                        <ScanLine className="w-3.5 h-3.5" />
-                                        Escanear Invitados
-                                    </button>
-                                    <div className="flex gap-2 mt-2">
-                                        <button
-                                            onClick={(e) => handleOpenAttendees(e, event)}
-                                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
-                                        >
-                                            <Users className="w-3 h-3" />
-                                            Asistentes
-                                        </button>
-                                        <button
-                                            onClick={() => navigate(`/edit-event/${event.code}`)}
-                                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
-                                        >
-                                            <Pencil className="w-3 h-3" />
-                                            Editar
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteOpen(event)}
-                                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
-                                        >
-                                            <Trash2 className="w-3 h-3" />
-                                            Eliminar
-                                        </button>
+                                            {/* Date & time */}
+                                            <div className="flex gap-6 border-t border-border pt-3 mb-4">
+                                                <div>
+                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                        Fecha
+                                                    </p>
+                                                    <p className="text-xs font-sans text-foreground mt-0.5">
+                                                        {event.date}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                        Hora
+                                                    </p>
+                                                    <p className="text-xs font-sans text-foreground mt-0.5">
+                                                        {event.time}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Action buttons */}
+                                            <button
+                                                onClick={() => navigate(`/scanner/${event.code}`)}
+                                                className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                                            >
+                                                <ScanLine className="w-3.5 h-3.5" />
+                                                Escanear Invitados
+                                            </button>
+                                            <div className="flex gap-2 mt-2">
+                                                <button
+                                                    onClick={(e) => handleOpenAttendees(e, event)}
+                                                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                                                >
+                                                    <Users className="w-3 h-3" />
+                                                    Asistentes
+                                                </button>
+                                                <button
+                                                    onClick={() => navigate(`/edit-event/${event.code}`)}
+                                                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                                                >
+                                                    <Pencil className="w-3 h-3" />
+                                                    Editar
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteOpen(event)}
+                                                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </>
+                    )}
                 </section>
             </div>
         </>

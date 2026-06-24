@@ -53,7 +53,7 @@ export default function PaymentPage() {
         cardName: '',
         expiry: '',
         cvv: '',
-        quorumCoins: '',
+        Coins: '',
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -64,7 +64,7 @@ export default function PaymentPage() {
         if (name === 'cardNumber') value = formatCardNumber(value);
         if (name === 'expiry') value = formatExpiry(value);
         if (name === 'cvv') value = value.replace(/\D/g, '').slice(0, 3);
-        if (name === 'quorumCoins') {
+        if (name === 'Coins') {
             value = value.replace(/\D/g, '');
             setBillPrice(Number(value));
         } 
@@ -82,8 +82,8 @@ export default function PaymentPage() {
             newErrors.expiry = 'Fecha de vencimiento inválida.';
         if (form.cvv.length != 3)
             newErrors.cvv = 'CVV inválido.';
-        if (!form.quorumCoins.trim())
-            newErrors.quorumCoins = 'Ingresa la cantidad de QuorumCoins.';
+        if (!form.Coins.trim())
+            newErrors.Coins = 'Ingresa la cantidad de Coins.';
         return newErrors;
     };
 
@@ -127,10 +127,10 @@ export default function PaymentPage() {
                         Pago confirmado
                     </p>
                     <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
-                        ¡QuorumCoins compradas!
+                        ¡Coins compradas!
                     </h2>
                     <h2 className="font-sans font-bold text-md tracking-widest mt-2">
-                        Verás tu nuevo balance de QuorumCoins en tu perfil.
+                        Verás tu nuevo balance de Coins en tu perfil.
                     </h2>
                 </div>
                 <button
@@ -174,16 +174,16 @@ export default function PaymentPage() {
                 {/* Order summary */}
                 <div className="border border-border rounded-[10px] bg-card p-4 mb-6 space-y-2">
                     <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
-                        ¿Cuántas QuorumCoins quieres comprar?
+                        ¿Cuántas Coins quieres comprar?
                     </p>
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
-                        (Recuerda que 1 QuorumCoin = 1 CLP)
+                        (Recuerda que 1 Coin = 1 CLP)
                     </p>
                     <div>
                         <InputField
                             icon={CircleDollarSign}
-                            name="quorumCoins"
-                            value={form.quorumCoins}
+                            name="Coins"
+                            value={form.Coins}
                             onChange={handleChange}
                             placeholder="0"
                             inputMode="numeric"
@@ -273,10 +273,10 @@ export default function PaymentPage() {
                     <div className="border-t border-border pt-4">
                         <div className="flex items-center justify-between mb-2">
                             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                                Valor QuorumCoins a comprar
+                                Valor Coins a comprar
                             </p>
                             <p className="font-sans font-medium text-sm">
-                                ${form.quorumCoins ? parseInt(form.quorumCoins) : 0} CLP
+                                ${form.Coins ? parseInt(form.Coins) : 0} CLP
                             </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">

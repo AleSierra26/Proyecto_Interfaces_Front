@@ -142,7 +142,7 @@ export default function ProfilePage() {
                             />
                         ) : (
                             <span className="text-muted-foreground/50 text-xs font-sans">
-                                Foto
+                                Añade tu foto
                             </span>
                         )}
                         {avatarUploading && (
@@ -180,7 +180,7 @@ export default function ProfilePage() {
                         {displayName}
                     </h2>
                     <div className="flex items-center justify-center gap-2">
-                        <h2 className="font-sans font-bold text-l tracking-widest">Mis QuorumCoins: {user.balance} </h2>
+                        <h2 className="font-sans font-bold text-l tracking-widest">Mis Coins: {user.balance} </h2>
                     </div>
                     <div>
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
@@ -195,7 +195,7 @@ export default function ProfilePage() {
                         className="flex items-center gap-1.5 px-3 py-2 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
                     >
                         <CircleDollarSign className="w-4 h-4" />
-                        Añadir QuorumCoins
+                        Añadir Coins
                     </button>
                 </div>
             </section>

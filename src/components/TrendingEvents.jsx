@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Music } from 'lucide-react';
+import { Music, ImageOff } from 'lucide-react';
 import { getAllEvents } from '../api';
 
 function EventSkeleton() {
@@ -19,12 +19,16 @@ function EventSkeleton() {
 export default function TrendingEvents() {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadAllEvents = async () => {
+            setLoading(true);
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             const data = await getAllEvents();
             setEvents(data.events || []);
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a short delay for better UX
+            setLoading(false);
         };
         loadAllEvents();
     }, []);
@@ -32,7 +36,7 @@ export default function TrendingEvents() {
     return (
         <section className="mt-7 animate-fade-in">
 
-            {/* Section header — Visual Hierarchy: eyebrow (muted/small) + title (bold/large) */}
+            {/* Section header */}
             <div className="flex items-end justify-between mb-4 px-4">
                 <div>
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
@@ -44,46 +48,47 @@ export default function TrendingEvents() {
                 </div>
             </div>
 
-            {/*
-             * Gestalt Continuity: la card parcialmente visible a la derecha
-             * señala implícitamente que hay más contenido (affordance de scroll).
-             * Responsive Design: carrusel en mobile → grid 3 columnas en desktop.
-             */}
             <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pl-4 pr-4 scrollbar-hide pt-1 pb-1">
-                {events.map((event) => (
-                    <div
-                        key={event.id}
-                        onClick={() => navigate(`/event/${event.code}`)}
-                        className="flex-none w-[70vw] max-w-[240px] md:w-[280px] md:max-w-none snap-start cursor-pointer group border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1"
-                    >
-                        <div className="relative w-full aspect-[4/3] bg-muted">
-                            {event.image_url ? (
-                                <img
-                                    src={event.image_url}
-                                    alt={event.title}
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                />
-                            ) : (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-muted-foreground/50 text-sm font-sans">Imagen Aquí!</span>
-                                </div>
-                            )}
-                        </div>
+                {loading ? (
+                    // Show a handful of skeleton cards while events are loading
+                    Array.from({ length: 4 }).map((_, i) => <EventSkeleton key={i} />)
+                ) : (
+                    events.map((event) => (
+                        <div
+                            key={event.id}
+                            onClick={() => navigate(`/event/${event.code}`)}
+                            className="flex-none w-[70vw] max-w-[240px] md:w-[280px] md:max-w-none snap-start cursor-pointer group border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1"
+                        >
+                            <div className="relative w-full aspect-[4/3] bg-muted">
+                                {event.image_url ? (
+                                    <img
+                                        src={event.image_url}
+                                        alt={event.title}
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <ImageOff className="text-muted-foreground/50" />
+                                        <span className="text-muted-foreground/50 text-sm font-sans">No hay imagen para este evento</span>
+                                    </div>
+                                )}
+                            </div>
 
-                        <div className="p-3">
-                            <h4 className="font-sans font-bold text-sm tracking-zen group-hover:text-accent transition-colors truncate">
-                                {event.title}
-                            </h4>
-                            <p className="text-[10px] text-muted-foreground font-sans mt-0.5 truncate">
-                                {event.venue} · {event.date}
-                            </p>
-                            <p className="font-sans font-bold text-sm mt-1">
-                                {event.price}
-                                <span className="text-[9px] font-normal text-muted-foreground uppercase tracking-widest ml-1">CLP</span>
-                            </p>
+                            <div className="p-3">
+                                <h4 className="font-sans font-bold text-sm tracking-zen group-hover:text-accent transition-colors truncate">
+                                    {event.title}
+                                </h4>
+                                <p className="text-[10px] text-muted-foreground font-sans mt-0.5 truncate">
+                                    {event.venue} · {event.date}
+                                </p>
+                                <p className="font-sans font-bold text-sm mt-1">
+                                    {event.price}
+                                    <span className="text-[9px] font-normal text-muted-foreground uppercase tracking-widest ml-1">Coins</span>
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
         </section>
     );
