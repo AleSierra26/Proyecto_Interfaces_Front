@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CreditCard, User, Lock, Calendar, ChevronLeft, CheckCircle, CircleDollarSign } from 'lucide-react';
-import { updateBalance } from '../api';
+import { CreditCard, User, Lock, Calendar, ChevronLeft, CheckCircle, CircleDollarSign, Plus } from 'lucide-react';
+import { updateBalance, getSavedCards, addSavedCard } from '../api';
 
 function FieldLabel({ htmlFor, children }) {
     return (
@@ -50,6 +50,10 @@ function formatExpiry(value) {
     return digits;
 }
 
+function brandLabel(brand) {
+    return { visa: 'Visa', mastercard: 'Mastercard', amex: 'American Express' }[brand] || 'Tarjeta';
+}
+
 export default function PaymentPage() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -70,6 +74,31 @@ export default function PaymentPage() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
+    // Saved cards
+    const [savedCards, setSavedCards] = useState([]);
+    const [cardsLoading, setCardsLoading] = useState(true);
+    const [selectedCardId, setSelectedCardId] = useState(null); // null = manual entry
+    const [useManualEntry, setUseManualEntry] = useState(false);
+    const [saveThisCard, setSaveThisCard] = useState(false);
+
+    useEffect(() => {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            setCardsLoading(false);
+            return;
+        }
+        getSavedCards(currentUser.id).then((data) => {
+            if (data.cards && data.cards.length > 0) {
+                setSavedCards(data.cards);
+                const defaultCard = data.cards.find((c) => c.is_default) || data.cards[0];
+                setSelectedCardId(defaultCard.id);
+            } else {
+                setUseManualEntry(true);
+            }
+            setCardsLoading(false);
+        });
+    }, []);
+
     const handleChange = (e) => {
         let { name, value } = e.target;
         if (name === 'cardNumber') value = formatCardNumber(value);
@@ -83,18 +112,36 @@ export default function PaymentPage() {
         setErrors((prev) => ({ ...prev, [name]: '' }));
     };
 
+    const handleSelectCard = (cardId) => {
+        setSelectedCardId(cardId);
+        setUseManualEntry(false);
+        setErrors({});
+    };
+
+    const handleUseManualEntry = () => {
+        setUseManualEntry(true);
+        setSelectedCardId(null);
+        setErrors({});
+    };
+
+    const usingSavedCard = !useManualEntry && selectedCardId !== null;
+
     const validate = () => {
         const newErrors = {};
-        if (form.cardNumber.replace(/\s/g, '').length < 16)
-            newErrors.cardNumber = 'Número de tarjeta inválido.';
-        if (!form.cardName.trim())
-            newErrors.cardName = 'Ingresa el nombre del titular.';
-        if (form.expiry.length < 5)
-            newErrors.expiry = 'Fecha de vencimiento inválida.';
-        if (form.cvv.length != 3)
-            newErrors.cvv = 'CVV inválido.';
         if (!form.Coins.trim())
             newErrors.Coins = 'Ingresa la cantidad de Coins.';
+
+        // Only validate the manual card fields if the user is entering a new card
+        if (!usingSavedCard) {
+            if (form.cardNumber.replace(/\s/g, '').length < 16)
+                newErrors.cardNumber = 'Número de tarjeta inválido.';
+            if (!form.cardName.trim())
+                newErrors.cardName = 'Ingresa el nombre del titular.';
+            if (form.expiry.length < 5)
+                newErrors.expiry = 'Fecha de vencimiento inválida.';
+            if (form.cvv.length != 3)
+                newErrors.cvv = 'CVV inválido.';
+        }
         return newErrors;
     };
 
@@ -117,6 +164,16 @@ export default function PaymentPage() {
         await new Promise((res) => setTimeout(res, 1500));
 
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+        // If the user filled in a new card and asked to save it, store it
+        if (!usingSavedCard && saveThisCard) {
+            await addSavedCard(currentUser.id, {
+                cardholderName: form.cardName,
+                cardNumber: form.cardNumber,
+                expMonth: parseInt(form.expiry.split('/')[0], 10),
+                expYear: 2000 + parseInt(form.expiry.split('/')[1], 10),
+            });
+        }
 
         let data;
         data = await updateBalance(currentUser.id, currentUser.balance + billPrice);
@@ -214,76 +271,148 @@ export default function PaymentPage() {
 
                 <div className="border-t border-border mb-6" />
 
-                {/* Card form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <FieldLabel htmlFor="cardNumber">Número de tarjeta</FieldLabel>
-                        <InputField
-                            id="cardNumber"
-                            icon={CreditCard}
-                            name="cardNumber"
-                            value={form.cardNumber}
-                            onChange={handleChange}
-                            placeholder="0000 0000 0000 0000"
-                            inputMode="numeric"
-                            autoComplete="cc-number"
-                            invalid={!!errors.cardNumber}
-                            aria-describedby={errors.cardNumber ? 'err-cardNumber' : undefined}
-                        />
-                        {errors.cardNumber && <FieldError id="err-cardNumber">{errors.cardNumber}</FieldError>}
-                    </div>
 
-                    <div>
-                        <FieldLabel htmlFor="cardName">Nombre del titular</FieldLabel>
-                        <InputField
-                            id="cardName"
-                            icon={User}
-                            name="cardName"
-                            value={form.cardName}
-                            onChange={handleChange}
-                            placeholder="Como aparece en la tarjeta"
-                            autoComplete="cc-name"
-                            invalid={!!errors.cardName}
-                            aria-describedby={errors.cardName ? 'err-cardName' : undefined}
-                        />
-                        {errors.cardName && <FieldError id="err-cardName">{errors.cardName}</FieldError>}
-                    </div>
+                    {/* Saved cards picker */}
+                    {!cardsLoading && savedCards.length > 0 && (
+                        <div className="mb-2">
+                            <FieldLabel>Método de pago</FieldLabel>
+                            <div className="space-y-2">
+                                {savedCards.map((card) => (
+                                    <button
+                                        type="button"
+                                        key={card.id}
+                                        onClick={() => handleSelectCard(card.id)}
+                                        className={`w-full flex items-center justify-between border rounded-[10px] px-3 py-2.5 bg-card transition-colors text-left ${
+                                            !useManualEntry && selectedCardId === card.id
+                                                ? 'border-foreground'
+                                                : 'border-border hover:border-foreground/50'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-2.5">
+                                            <CreditCard className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                            <div>
+                                                <p className="text-sm font-sans text-foreground">
+                                                    {brandLabel(card.brand)} •••• {card.last4}
+                                                </p>
+                                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mt-0.5">
+                                                    Vence {String(card.exp_month).padStart(2, '0')}/{card.exp_year}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className={`w-4 h-4 rounded-full border flex-shrink-0 ${
+                                                !useManualEntry && selectedCardId === card.id
+                                                    ? 'border-foreground bg-foreground'
+                                                    : 'border-border'
+                                            }`}
+                                        />
+                                    </button>
+                                ))}
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <FieldLabel htmlFor="expiry">Vencimiento</FieldLabel>
-                            <InputField
-                                id="expiry"
-                                icon={Calendar}
-                                name="expiry"
-                                value={form.expiry}
-                                onChange={handleChange}
-                                placeholder="MM/AA"
-                                inputMode="numeric"
-                                autoComplete="cc-exp"
-                                invalid={!!errors.expiry}
-                                aria-describedby={errors.expiry ? 'err-expiry' : undefined}
-                            />
-                            {errors.expiry && <FieldError id="err-expiry">{errors.expiry}</FieldError>}
+                                <button
+                                    type="button"
+                                    onClick={handleUseManualEntry}
+                                    className={`w-full flex items-center gap-2 border rounded-[10px] px-3 py-2.5 transition-colors text-left ${
+                                        useManualEntry
+                                            ? 'border-foreground bg-card'
+                                            : 'border-dashed border-border hover:border-foreground/50'
+                                    }`}
+                                >
+                                    <Plus className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                    <span className="text-[12px] uppercase tracking-widest font-sans text-muted-foreground">
+                                        Usar otra tarjeta
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                        <div>
-                            <FieldLabel htmlFor="cvv">CVV</FieldLabel>
-                            <InputField
-                                id="cvv"
-                                icon={Lock}
-                                name="cvv"
-                                value={form.cvv}
-                                onChange={handleChange}
-                                placeholder="•••"
-                                inputMode="numeric"
-                                type="password"
-                                autoComplete="cc-csc"
-                                invalid={!!errors.cvv}
-                                aria-describedby={errors.cvv ? 'err-cvv' : undefined}
-                            />
-                            {errors.cvv && <FieldError id="err-cvv">{errors.cvv}</FieldError>}
+                    )}
+
+                    {/* Manual card form — shown if no saved cards, or user chose "use another card" */}
+                    {(useManualEntry || savedCards.length === 0) && (
+                        <div className="space-y-4">
+                            <div>
+                                <FieldLabel htmlFor="cardNumber">Número de tarjeta</FieldLabel>
+                                <InputField
+                                    id="cardNumber"
+                                    icon={CreditCard}
+                                    name="cardNumber"
+                                    value={form.cardNumber}
+                                    onChange={handleChange}
+                                    placeholder="0000 0000 0000 0000"
+                                    inputMode="numeric"
+                                    autoComplete="cc-number"
+                                    invalid={!!errors.cardNumber}
+                                    aria-describedby={errors.cardNumber ? 'err-cardNumber' : undefined}
+                                />
+                                {errors.cardNumber && <FieldError id="err-cardNumber">{errors.cardNumber}</FieldError>}
+                            </div>
+
+                            <div>
+                                <FieldLabel htmlFor="cardName">Nombre del titular</FieldLabel>
+                                <InputField
+                                    id="cardName"
+                                    icon={User}
+                                    name="cardName"
+                                    value={form.cardName}
+                                    onChange={handleChange}
+                                    placeholder="Como aparece en la tarjeta"
+                                    autoComplete="cc-name"
+                                    invalid={!!errors.cardName}
+                                    aria-describedby={errors.cardName ? 'err-cardName' : undefined}
+                                />
+                                {errors.cardName && <FieldError id="err-cardName">{errors.cardName}</FieldError>}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <FieldLabel htmlFor="expiry">Vencimiento</FieldLabel>
+                                    <InputField
+                                        id="expiry"
+                                        icon={Calendar}
+                                        name="expiry"
+                                        value={form.expiry}
+                                        onChange={handleChange}
+                                        placeholder="MM/AA"
+                                        inputMode="numeric"
+                                        autoComplete="cc-exp"
+                                        invalid={!!errors.expiry}
+                                        aria-describedby={errors.expiry ? 'err-expiry' : undefined}
+                                    />
+                                    {errors.expiry && <FieldError id="err-expiry">{errors.expiry}</FieldError>}
+                                </div>
+                                <div>
+                                    <FieldLabel htmlFor="cvv">CVV</FieldLabel>
+                                    <InputField
+                                        id="cvv"
+                                        icon={Lock}
+                                        name="cvv"
+                                        value={form.cvv}
+                                        onChange={handleChange}
+                                        placeholder="•••"
+                                        inputMode="numeric"
+                                        type="password"
+                                        autoComplete="cc-csc"
+                                        invalid={!!errors.cvv}
+                                        aria-describedby={errors.cvv ? 'err-cvv' : undefined}
+                                    />
+                                    {errors.cvv && <FieldError id="err-cvv">{errors.cvv}</FieldError>}
+                                </div>
+                            </div>
+
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={saveThisCard}
+                                    onChange={(e) => setSaveThisCard(e.target.checked)}
+                                    className="w-4 h-4 accent-foreground"
+                                />
+                                <span className="text-[12px] uppercase tracking-widest font-sans text-muted-foreground">
+                                    Guardar esta tarjeta para la próxima vez
+                                </span>
+                            </label>
                         </div>
-                    </div>
+                    )}
 
                     {errors.general && <FieldError id="err-general">{errors.general}</FieldError>}
 

@@ -149,3 +149,22 @@ export async function uploadAvatar(userId, file) {
     });
     return res.json();
 }
+
+export async function getSavedCards(userId) {
+    const res = await fetch(`${API}/users/${userId}/cards`);
+    return res.json();
+}
+
+export async function addSavedCard(userId, cardData) {
+    const res = await fetch(`${API}/users/${userId}/cards`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cardData),
+    });
+    return res.json();
+}
+
+export async function deleteSavedCard(cardId) {
+    const res = await fetch(`${API}/cards/${cardId}`, { method: 'DELETE' });
+    return res.json();
+}
