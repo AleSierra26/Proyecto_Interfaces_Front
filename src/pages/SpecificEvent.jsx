@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { User, MapPin, Calendar, Clock, CheckCircle, ChevronLeft, ChevronDown, ChevronUp, ImageOff, X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { purchaseTicket, getEvent, getEventResales, purchaseResale, getMyTickets, updateBalance } from '../api';
+import useFocusTrap from '../hooks/useFocusTrap';
 
 export default function SpecificEvent() {
     const navigate = useNavigate();
@@ -44,12 +45,7 @@ export default function SpecificEvent() {
 
     }, [eventId]);
 
-    useEffect(() => {
-        if (!showResales) return;
-        const onKey = (e) => { if (e.key === 'Escape') setShowResales(false); };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [showResales]);
+    const resalesRef = useFocusTrap(showResales, () => setShowResales(false));
 
     const handleOpenResales = async () => {
         setShowResales(true);
@@ -228,9 +224,11 @@ export default function SpecificEvent() {
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowResales(false)} aria-hidden="true" />
                     <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
                         <div
+                            ref={resalesRef}
                             role="dialog"
                             aria-modal="true"
                             aria-labelledby="resales-title"
+                            tabIndex={-1}
                             className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]"
                         >
 

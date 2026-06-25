@@ -4,9 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getEvent, updateEvent } from '../api';
 import EventImageUpload from '../components/EventImageUpload';
 
-function FieldLabel({ children }) {
+function FieldLabel({ htmlFor, children }) {
     return (
-        <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+        <label htmlFor={htmlFor} className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
             {children}
         </label>
     );
@@ -15,8 +15,9 @@ function FieldLabel({ children }) {
 function InputField({ icon: Icon, ...props }) {
     return (
         <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors">
-            {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
+            {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />}
             <input
+                id={props.id ?? props.name}
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans"
                 {...props}
             />
@@ -27,8 +28,9 @@ function InputField({ icon: Icon, ...props }) {
 function TextAreaField({ icon: Icon, ...props }) {
     return (
         <div className="flex items-start gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors">
-            {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />}
+            {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" aria-hidden="true" />}
             <textarea
+                id={props.id ?? props.name}
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans resize-none"
                 rows={3}
                 {...props}
@@ -149,7 +151,7 @@ export default function EditEventPage() {
                 {/* Basic info */}
                 <div className="space-y-4 mb-6">
                     <div>
-                        <FieldLabel>Título del evento</FieldLabel>
+                        <FieldLabel htmlFor="title">Título del evento</FieldLabel>
                         <InputField
                             icon={Tag}
                             name="title"
@@ -160,7 +162,7 @@ export default function EditEventPage() {
                         />
                     </div>
                     <div>
-                        <FieldLabel>Descripción corta</FieldLabel>
+                        <FieldLabel htmlFor="description">Descripción corta</FieldLabel>
                         <TextAreaField
                             icon={AlignLeft}
                             name="description"
@@ -180,7 +182,7 @@ export default function EditEventPage() {
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <FieldLabel>Fecha</FieldLabel>
+                            <FieldLabel htmlFor="date">Fecha</FieldLabel>
                             <InputField
                                 icon={Calendar}
                                 type="date"
@@ -191,7 +193,7 @@ export default function EditEventPage() {
                             />
                         </div>
                         <div>
-                            <FieldLabel>Hora</FieldLabel>
+                            <FieldLabel htmlFor="time">Hora</FieldLabel>
                             <InputField
                                 icon={Clock}
                                 type="time"
@@ -212,7 +214,7 @@ export default function EditEventPage() {
                         Ubicación
                     </p>
                     <div>
-                        <FieldLabel>Nombre del lugar</FieldLabel>
+                        <FieldLabel htmlFor="venue">Nombre del lugar</FieldLabel>
                         <InputField
                             icon={MapPin}
                             name="venue"
@@ -223,7 +225,7 @@ export default function EditEventPage() {
                         />
                     </div>
                     <div>
-                        <FieldLabel>Dirección</FieldLabel>
+                        <FieldLabel htmlFor="address">Dirección</FieldLabel>
                         <InputField
                             icon={MapPin}
                             name="address"
@@ -242,13 +244,16 @@ export default function EditEventPage() {
                         Tickets
                     </p>
                     <div>
-                        <FieldLabel>Tipo de entrada</FieldLabel>
-                        <div className="flex gap-2">
+                        <span id="ticket-type-label" className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+                            Tipo de entrada
+                        </span>
+                        <div className="flex gap-2" role="group" aria-labelledby="ticket-type-label">
                             {['paid', 'free'].map((type) => (
                                 <button
                                     key={type}
                                     type="button"
                                     onClick={() => setForm((p) => ({ ...p, priceLabel: type }))}
+                                    aria-pressed={form.priceLabel === type}
                                     className={`flex-1 py-2.5 text-xs uppercase tracking-widest rounded-[10px] font-sans font-medium border transition-colors ${
                                         form.priceLabel === type
                                             ? 'bg-primary text-primary-foreground border-primary'
@@ -262,7 +267,7 @@ export default function EditEventPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <FieldLabel>Precio (CLP)</FieldLabel>
+                            <FieldLabel htmlFor="price">Precio (CLP)</FieldLabel>
                             <InputField
                                 icon={DollarSign}
                                 type="number"
@@ -276,7 +281,7 @@ export default function EditEventPage() {
                             />
                         </div>
                         <div>
-                            <FieldLabel>Cupos disponibles</FieldLabel>
+                            <FieldLabel htmlFor="capacity">Cupos disponibles</FieldLabel>
                             <InputField
                                 icon={Users}
                                 type="number"

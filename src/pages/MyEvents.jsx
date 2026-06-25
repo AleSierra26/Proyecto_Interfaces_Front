@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Plus, ScanLine, Pencil, Trash2, CalendarDays, AlertTriangle, Link, Check, Users, User, X, ImageOff } from 'lucide-react';
 import { getMyEvents, deleteEvent, getEventAttendees } from '../api';
+import useFocusTrap from '../hooks/useFocusTrap';
 
 function EventSkeleton() {
     return (
@@ -42,17 +43,8 @@ export default function MyEvents() {
         loadEvents();
     }, []);
 
-    useEffect(() => {
-        if (!showDeleteConfirm && !showAttendees) return;
-        const onKey = (e) => {
-            if (e.key === 'Escape') {
-                setShowDeleteConfirm(false);
-                setShowAttendees(false);
-            }
-        };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [showDeleteConfirm, showAttendees]);
+    const deleteRef = useFocusTrap(showDeleteConfirm, () => setShowDeleteConfirm(false));
+    const attendeesRef = useFocusTrap(showAttendees, () => setShowAttendees(false));
 
     const handleDeleteOpen = (event) => {
         setSelectedEvent(event);
@@ -101,7 +93,7 @@ export default function MyEvents() {
                         aria-hidden="true"
                     />
                     <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none px-4">
-                        <div role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" className="bg-card w-full max-w-sm rounded-[10px] p-6 pointer-events-auto space-y-4">
+                        <div ref={deleteRef} role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" tabIndex={-1} className="bg-card w-full max-w-sm rounded-[10px] p-6 pointer-events-auto space-y-4">
                             <div className="text-center">
                                 <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
                                     <AlertTriangle className="w-5 h-5 text-foreground" aria-hidden="true" />
@@ -152,7 +144,7 @@ export default function MyEvents() {
                         aria-hidden="true"
                     />
                     <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
-                        <div role="dialog" aria-modal="true" aria-labelledby="attendees-modal-title" className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]">
+                        <div ref={attendeesRef} role="dialog" aria-modal="true" aria-labelledby="attendees-modal-title" tabIndex={-1} className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]">
 
                             {/* Handle */}
                             <div className="flex justify-center pt-3 pb-2">

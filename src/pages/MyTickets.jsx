@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { QrCode, ArrowLeftRight, Ticket, ImageOff } from 'lucide-react';
 import { getMyTickets, listForResale } from '../api';
+import useFocusTrap from '../hooks/useFocusTrap';
 
 function EventSkeleton() {
     return (
@@ -71,17 +72,8 @@ export default function MyTickets() {
 
         setResaleSuccess(true);
     };
-    useEffect(() => {
-        if (!showQrModal && !showResaleModal) return;
-        const onKey = (e) => {
-            if (e.key === 'Escape') {
-                setShowQrModal(false);
-                setShowResaleModal(false);
-            }
-        };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [showQrModal, showResaleModal]);
+    const qrRef = useFocusTrap(showQrModal, () => setShowQrModal(false));
+    const resaleRef = useFocusTrap(showResaleModal, () => setShowResaleModal(false));
 
     useEffect(() => {
         const loadTickets = async () => {
@@ -299,9 +291,11 @@ export default function MyTickets() {
             {showQrModal && selectedTicket && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
                     <div
+                        ref={qrRef}
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="qr-modal-title"
+                        tabIndex={-1}
                         className="bg-card p-6 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm animate-fade-in"
                     >
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
@@ -335,9 +329,11 @@ export default function MyTickets() {
             {showResaleModal && selectedTicket && (
                 <div className="fixed inset-0 flex items-end justify-center z-[60] pointer-events-none">
                     <div
+                        ref={resaleRef}
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="resale-modal-title"
+                        tabIndex={-1}
                         className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]"
                     >
 

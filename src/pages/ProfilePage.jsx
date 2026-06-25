@@ -3,9 +3,9 @@ import { Pencil, LogOut, Camera, Check, X, CircleDollarSign } from 'lucide-react
 import { useNavigate } from 'react-router-dom';
 import { updateProfile, uploadAvatar } from '../api';
 
-function FieldLabel({ children }) {
+function FieldLabel({ htmlFor, children }) {
     return (
-        <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+        <label htmlFor={htmlFor} className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
             {children}
         </label>
     );
@@ -243,18 +243,22 @@ export default function ProfilePage() {
                     <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <FieldLabel>Nombre</FieldLabel>
+                                <FieldLabel htmlFor="firstName">Nombre</FieldLabel>
                                 <InputField
+                                    id="firstName"
                                     type="text"
+                                    autoComplete="given-name"
                                     value={form.firstName}
                                     onChange={(e) => setForm((p) => ({ ...p, firstName: e.target.value }))}
                                     placeholder="Nombre"
                                 />
                             </div>
                             <div>
-                                <FieldLabel>Apellido</FieldLabel>
+                                <FieldLabel htmlFor="lastName">Apellido</FieldLabel>
                                 <InputField
+                                    id="lastName"
                                     type="text"
+                                    autoComplete="family-name"
                                     value={form.lastName}
                                     onChange={(e) => setForm((p) => ({ ...p, lastName: e.target.value }))}
                                     placeholder="Apellido"
@@ -262,9 +266,11 @@ export default function ProfilePage() {
                             </div>
                         </div>
                         <div>
-                            <FieldLabel>Correo electrónico</FieldLabel>
+                            <FieldLabel htmlFor="email">Correo electrónico</FieldLabel>
                             <InputField
+                                id="email"
                                 type="email"
+                                autoComplete="email"
                                 value={form.email}
                                 onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                                 placeholder="tu@correo.com"
