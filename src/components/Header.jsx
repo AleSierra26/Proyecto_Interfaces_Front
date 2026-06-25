@@ -41,20 +41,22 @@ export default function Header() {
         <header className='sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border'>
             <div className='flex items-center px-4 py-3 max-w-3xl mx-auto'>
 
-                {/* Logo — Gestalt Similarity: same logo placement on every screen */}
-                <div
-                    className='flex items-center gap-2.5 cursor-pointer flex-shrink-0'
+                {/* Logo — botón real (enfocable y accesible por teclado), no un div */}
+                <button
+                    type="button"
+                    className='flex items-center gap-2.5 cursor-pointer flex-shrink-0 inline-btn'
                     onClick={() => navigate(home)}
+                    aria-label='Quorum — ir al inicio'
                 >
                     {currentTheme === 'light' ? (
-                        <img src={QuorumLogoLight} alt="Logo Quorum" className="w-9 h-9" />
+                        <img src={QuorumLogoLight} alt="" aria-hidden="true" className="w-9 h-9" />
                     ) : (
-                        <img src={QuorumLogoDark} alt="Logo Quorum" className="w-9 h-9" />
+                        <img src={QuorumLogoDark} alt="" aria-hidden="true" className="w-9 h-9" />
                     )}
                     <span className='font-sans font-bold text-lg tracking-zen uppercase hidden sm:block'>
                         Quorum
                     </span>
-                </div>
+                </button>
 
                 {/* Desktop nav: Visual Hierarchy — nav links are secondary to the logo */}
                 {currentUser && (
@@ -83,13 +85,15 @@ export default function Header() {
                     </nav>
                 )}
 
-                {/* Mobile: centred wordmark */}
-                <h1
-                    className='absolute left-1/2 -translate-x-1/2 font-sans font-bold text-2xl tracking-zen uppercase cursor-pointer md:hidden'
+                {/* Mobile: centred wordmark — botón real, accesible por teclado */}
+                <button
+                    type="button"
+                    className='absolute left-1/2 -translate-x-1/2 font-sans font-bold text-2xl tracking-zen uppercase cursor-pointer md:hidden inline-btn'
                     onClick={() => navigate(home)}
+                    aria-label='Quorum — ir al inicio'
                 >
                     Quorum
-                </h1>
+                </button>
 
                 {/* Profile button — always right-aligned */}
                 <div className='flex items-center ml-auto gap-2'>

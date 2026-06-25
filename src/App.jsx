@@ -22,8 +22,17 @@ function AppContent() {
 
   return (
     <>
+
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-[10px] focus:text-xs focus:uppercase focus:tracking-widest focus:font-sans"
+      >
+        Saltar al contenido principal
+      </a>
+
       <Header />
 
+      <main id="main-content">
       <Routes>
         {/* public routes */}
         <Route path='/' element={<PublicRoute><LandingPage /></PublicRoute>} />
@@ -41,6 +50,7 @@ function AppContent() {
         <Route path='/payment' element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
         <Route path='/edit-event/:eventId' element={<ProtectedRoute><EditEventPage /></ProtectedRoute>} />
       </Routes>
+      </main>
 
       {location.pathname !== '/' && location.pathname !== '/auth' && <BottomNav />}
     </>

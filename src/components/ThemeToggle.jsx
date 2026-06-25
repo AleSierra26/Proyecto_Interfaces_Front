@@ -16,13 +16,14 @@ export default function ThemeToggle({ onToggle }) {
     return (
         <button
             onClick={handleClick}
-            className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors"
-            aria-label="Cambiar tema"
+            className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors inline-btn"
+            aria-label={theme === 'light' ? 'Activar modo oscuro' : 'Activar modo claro'}
+            aria-pressed={theme === 'dark'}
         >
             {theme === 'light' ? (
-                <Moon className="w-4 h-4 text-foreground" />
+                <Moon className="w-4 h-4 text-foreground" aria-hidden="true" />
             ) : (
-                <Sun className="w-4 h-4 text-foreground" />
+                <Sun className="w-4 h-4 text-foreground" aria-hidden="true" />
             )}
         </button>
     );

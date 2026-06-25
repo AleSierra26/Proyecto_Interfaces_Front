@@ -71,6 +71,17 @@ export default function MyTickets() {
 
         setResaleSuccess(true);
     };
+    useEffect(() => {
+        if (!showQrModal && !showResaleModal) return;
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                setShowQrModal(false);
+                setShowResaleModal(false);
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [showQrModal, showResaleModal]);
 
     useEffect(() => {
         const loadTickets = async () => {
@@ -91,10 +102,10 @@ export default function MyTickets() {
         <>
             {/* Backdrops */}
             {showQrModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowQrModal(false)} />
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowQrModal(false)} aria-hidden="true" />
             )}
             {showResaleModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55]" onClick={() => setShowResaleModal(false)} />
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55]" onClick={() => setShowResaleModal(false)} aria-hidden="true" />
             )}
 
             <div className="min-h-screen bg-background max-w-md md:max-w-2xl mx-auto relative pb-24 px-4 animate-fade-in">
@@ -287,11 +298,16 @@ export default function MyTickets() {
             {/* QR Modal */}
             {showQrModal && selectedTicket && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-                    <div className="bg-card p-6 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm animate-fade-in">
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="qr-modal-title"
+                        className="bg-card p-6 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm animate-fade-in"
+                    >
                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
                             Tu entrada
                         </p>
-                        <h3 className="font-sans font-bold text-base tracking-widest">
+                        <h3 id="qr-modal-title" className="font-sans font-bold text-base tracking-widest">
                             {selectedTicket.event_title}
                         </h3>
                         <img
@@ -318,7 +334,12 @@ export default function MyTickets() {
             {/* Resale Modal */}
             {showResaleModal && selectedTicket && (
                 <div className="fixed inset-0 flex items-end justify-center z-[60] pointer-events-none">
-                    <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]">
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="resale-modal-title"
+                        className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]"
+                    >
 
                         {/* Handle — affordance: el pill indica que el sheet es deslizable */}
                         <div className="flex justify-center pt-3 pb-4">
@@ -331,7 +352,7 @@ export default function MyTickets() {
                                     <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
                                         <ArrowLeftRight className="w-6 h-6 text-foreground" aria-hidden="true" />
                                     </div>
-                                    <p className="font-sans font-bold text-base tracking-widest">
+                                    <p id="resale-modal-title" className="font-sans font-bold text-base tracking-widest">
                                         ¡Ticket publicado!
                                     </p>
                                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
@@ -349,7 +370,7 @@ export default function MyTickets() {
                                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
                                         Mercado secundario
                                     </p>
-                                    <h3 className="font-sans font-bold text-xl tracking-widest mb-1">
+                                    <h3 id="resale-modal-title" className="font-sans font-bold text-xl tracking-widest mb-1">
                                         Revender ticket
                                     </h3>
                                     <p className="text-xs text-muted-foreground font-sans mb-6">
@@ -357,11 +378,14 @@ export default function MyTickets() {
                                     </p>
 
                                     <div className="mb-4">
-                                        <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+                                        <label htmlFor="resale-price" className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
                                             Tu precio de venta (Coins)
                                         </label>
                                         <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-background focus-within:border-foreground transition-colors">
                                             <input
+                                                id="resale-price"
+                                                aria-invalid={resaleError ? true : undefined}
+                                                aria-describedby={resaleError ? 'resale-error' : undefined}
                                                 type="number"
                                                 min="1"
                                                 max={selectedTicket?.event_price ? selectedTicket.event_price - 1 : undefined}
@@ -392,8 +416,8 @@ export default function MyTickets() {
                                     </div>
 
                                     {resaleError && (
-                                        <p className="text-[10px] uppercase tracking-widest font-sans text-destructive mb-3">
-                                            ⚠ {resaleError}
+                                        <p id="resale-error" role="alert" className="text-[10px] uppercase tracking-widest font-sans font-medium text-destructive mb-3 flex items-center gap-1">
+                                            <span aria-hidden="true">⚠</span> {resaleError}
                                         </p>
                                     )}
 

@@ -54,22 +54,24 @@ export default function TrendingEvents() {
                     Array.from({ length: 4 }).map((_, i) => <EventSkeleton key={i} />)
                 ) : (
                     events.map((event) => (
-                        <div
+                        <button
                             key={event.id}
+                            type="button"
                             onClick={() => navigate(`/event/${event.code}`)}
-                            className="flex-none w-[70vw] max-w-[240px] md:w-[280px] md:max-w-none snap-start cursor-pointer group border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1"
+                            aria-label={`Ver evento ${event.title}`}
+                            className="text-left flex-none w-[70vw] max-w-[240px] md:w-[280px] md:max-w-none snap-start cursor-pointer group border border-border rounded-[10px] bg-card overflow-hidden transition-transform duration-200 hover:-translate-y-1 inline-btn"
                         >
                             <div className="relative w-full aspect-[4/3] bg-muted">
                                 {event.image_url ? (
                                     <img
                                         src={event.image_url}
-                                        alt={event.title}
+                                        alt={`Imagen del evento ${event.title}`}
                                         className="absolute inset-0 w-full h-full object-cover"
                                     />
                                 ) : (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                        <ImageOff className="text-muted-foreground/50" />
-                                        <span className="text-muted-foreground/50 text-sm font-sans">No hay imagen para este evento</span>
+                                        <ImageOff className="text-muted-foreground/50" aria-hidden="true" />
+                                        <span className="text-muted-foreground/50 text-sm font-sans">Sin imagen</span>
                                     </div>
                                 )}
                             </div>
@@ -86,7 +88,7 @@ export default function TrendingEvents() {
                                     <span className="text-[9px] font-normal text-muted-foreground uppercase tracking-widest ml-1">Coins</span>
                                 </p>
                             </div>
-                        </div>
+                        </button>
                     ))
                 )}
             </div>

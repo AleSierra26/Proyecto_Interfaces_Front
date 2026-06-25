@@ -272,8 +272,8 @@ export default function ProfilePage() {
                         </div>
 
                         {saveError && (
-                            <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
-                                ⚠ {saveError}
+                            <p role="alert" className="text-[10px] uppercase tracking-widest font-sans font-medium text-destructive flex items-center gap-1">
+                                <span aria-hidden="true">⚠</span> {saveError}
                             </p>
                         )}
 

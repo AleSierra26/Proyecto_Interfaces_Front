@@ -42,6 +42,18 @@ export default function MyEvents() {
         loadEvents();
     }, []);
 
+    useEffect(() => {
+        if (!showDeleteConfirm && !showAttendees) return;
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                setShowDeleteConfirm(false);
+                setShowAttendees(false);
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [showDeleteConfirm, showAttendees]);
+
     const handleDeleteOpen = (event) => {
         setSelectedEvent(event);
         setDeleteError('');
@@ -86,14 +98,15 @@ export default function MyEvents() {
                     <div
                         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
                         onClick={() => setShowDeleteConfirm(false)}
+                        aria-hidden="true"
                     />
                     <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none px-4">
-                        <div className="bg-card w-full max-w-sm rounded-[10px] p-6 pointer-events-auto space-y-4">
+                        <div role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" className="bg-card w-full max-w-sm rounded-[10px] p-6 pointer-events-auto space-y-4">
                             <div className="text-center">
                                 <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
-                                    <AlertTriangle className="w-5 h-5 text-foreground" />
+                                    <AlertTriangle className="w-5 h-5 text-foreground" aria-hidden="true" />
                                 </div>
-                                <p className="font-sans font-bold text-lg tracking-widest">
+                                <p id="delete-modal-title" className="font-sans font-bold text-lg tracking-widest">
                                     ¿Eliminar evento?
                                 </p>
                                 <p className="text-sm font-sans text-foreground mt-2">
@@ -105,8 +118,8 @@ export default function MyEvents() {
                             </div>
 
                             {deleteError && (
-                                <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground text-center">
-                                    ⚠ {deleteError}
+                                <p role="alert" className="text-[10px] uppercase tracking-widest font-sans font-medium text-destructive text-center flex items-center justify-center gap-1">
+                                    <span aria-hidden="true">⚠</span> {deleteError}
                                 </p>
                             )}
 
@@ -136,9 +149,10 @@ export default function MyEvents() {
                     <div
                         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
                         onClick={() => setShowAttendees(false)}
+                        aria-hidden="true"
                     />
                     <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
-                        <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]">
+                        <div role="dialog" aria-modal="true" aria-labelledby="attendees-modal-title" className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]">
 
                             {/* Handle */}
                             <div className="flex justify-center pt-3 pb-2">
@@ -151,15 +165,16 @@ export default function MyEvents() {
                                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
                                             Lista de asistentes
                                         </p>
-                                        <h3 className="font-sans font-bold text-lg tracking-widest">
+                                        <h3 id="attendees-modal-title" className="font-sans font-bold text-lg tracking-widest">
                                             {attendeesEvent.title}
                                         </h3>
                                     </div>
                                     <button
                                         onClick={() => setShowAttendees(false)}
-                                        className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                                        aria-label="Cerrar lista de asistentes"
+                                        className="p-1 text-muted-foreground hover:text-foreground transition-colors inline-btn"
                                     >
-                                        <X className="w-4 h-4" />
+                                        <X className="w-4 h-4" aria-hidden="true" />
                                     </button>
                                 </div>
 
@@ -305,19 +320,23 @@ export default function MyEvents() {
                                         {/* Cover image with copy link button overlaid */}
                                         <div
                                             onClick={() => navigate(`/event/${event.code}`)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/event/${event.code}`); } }}
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-label={`Ver evento ${event.title}`}
                                             className="relative w-full aspect-[4/3] bg-muted cursor-pointer"
                                         >
-                                            <div className="relative w-full aspect-[4/3] bg-muted cursor-pointer">
+                                            <div className="relative w-full aspect-[4/3] bg-muted">
                                                 {event.image_url ? (
                                                     <img
                                                         src={event.image_url}
-                                                        alt={event.title}
+                                                        alt={`Imagen del evento ${event.title}`}
                                                         className="absolute inset-0 w-full h-full object-cover"
                                                     />
                                                 ) : (
                                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                        <ImageOff className="text-muted-foreground/50" />
-                                                        <span className="text-muted-foreground/50 text-sm font-sans">No hay imagen para este evento</span>
+                                                        <ImageOff className="text-muted-foreground/50" aria-hidden="true" />
+                                                        <span className="text-muted-foreground/50 text-sm font-sans">Sin imagen</span>
                                                     </div>
                                                 )}
                                             </div>

@@ -3,23 +3,34 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { CreditCard, User, Lock, Calendar, ChevronLeft, CheckCircle, CircleDollarSign } from 'lucide-react';
 import { updateBalance } from '../api';
 
-function FieldLabel({ children }) {
+function FieldLabel({ htmlFor, children }) {
     return (
-        <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+        <label htmlFor={htmlFor} className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
             {children}
         </label>
     );
 }
 
-function InputField({ icon: Icon, ...props }) {
+function InputField({ icon: Icon, invalid, ...props }) {
     return (
-        <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors">
-            {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
+        <div className={`flex items-center gap-2 border rounded-[10px] px-3 py-2.5 bg-card transition-colors ${
+            invalid ? 'border-destructive' : 'border-border focus-within:border-foreground'
+        }`}>
+            {Icon && <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />}
             <input
+                aria-invalid={invalid || undefined}
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans"
                 {...props}
             />
         </div>
+    );
+}
+
+function FieldError({ id, children }) {
+    return (
+        <p id={id} role="alert" className="text-[10px] uppercase tracking-widest text-destructive font-sans font-medium mt-1.5 flex items-center gap-1">
+            <span aria-hidden="true">⚠</span> {children}
+        </p>
     );
 }
 
@@ -92,6 +103,11 @@ export default function PaymentPage() {
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
+            const firstInvalid = ['Coins', 'cardNumber', 'cardName', 'expiry', 'cvv']
+                .find((field) => validationErrors[field]);
+            if (firstInvalid) {
+                document.getElementById(firstInvalid)?.focus();
+            }
             return;
         }
 
@@ -180,14 +196,19 @@ export default function PaymentPage() {
                         (Recuerda que 1 Coin = 1 CLP)
                     </p>
                     <div>
+                        <FieldLabel htmlFor="Coins">Cantidad de Coins</FieldLabel>
                         <InputField
+                            id="Coins"
                             icon={CircleDollarSign}
                             name="Coins"
                             value={form.Coins}
                             onChange={handleChange}
                             placeholder="0"
                             inputMode="numeric"
+                            invalid={!!errors.Coins}
+                            aria-describedby={errors.Coins ? 'err-Coins' : undefined}
                         />
+                        {errors.Coins && <FieldError id="err-Coins">{errors.Coins}</FieldError>}
                     </div>
                 </div>
 
@@ -196,58 +217,59 @@ export default function PaymentPage() {
                 {/* Card form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <FieldLabel>Número de tarjeta</FieldLabel>
+                        <FieldLabel htmlFor="cardNumber">Número de tarjeta</FieldLabel>
                         <InputField
+                            id="cardNumber"
                             icon={CreditCard}
                             name="cardNumber"
                             value={form.cardNumber}
                             onChange={handleChange}
                             placeholder="0000 0000 0000 0000"
                             inputMode="numeric"
+                            autoComplete="cc-number"
+                            invalid={!!errors.cardNumber}
+                            aria-describedby={errors.cardNumber ? 'err-cardNumber' : undefined}
                         />
-                        {errors.cardNumber && (
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans mt-1">
-                                ⚠ {errors.cardNumber}
-                            </p>
-                        )}
+                        {errors.cardNumber && <FieldError id="err-cardNumber">{errors.cardNumber}</FieldError>}
                     </div>
 
                     <div>
-                        <FieldLabel>Nombre del titular</FieldLabel>
+                        <FieldLabel htmlFor="cardName">Nombre del titular</FieldLabel>
                         <InputField
+                            id="cardName"
                             icon={User}
                             name="cardName"
                             value={form.cardName}
                             onChange={handleChange}
                             placeholder="Como aparece en la tarjeta"
+                            autoComplete="cc-name"
+                            invalid={!!errors.cardName}
+                            aria-describedby={errors.cardName ? 'err-cardName' : undefined}
                         />
-                        {errors.cardName && (
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans mt-1">
-                                ⚠ {errors.cardName}
-                            </p>
-                        )}
+                        {errors.cardName && <FieldError id="err-cardName">{errors.cardName}</FieldError>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <FieldLabel>Vencimiento</FieldLabel>
+                            <FieldLabel htmlFor="expiry">Vencimiento</FieldLabel>
                             <InputField
+                                id="expiry"
                                 icon={Calendar}
                                 name="expiry"
                                 value={form.expiry}
                                 onChange={handleChange}
                                 placeholder="MM/AA"
                                 inputMode="numeric"
+                                autoComplete="cc-exp"
+                                invalid={!!errors.expiry}
+                                aria-describedby={errors.expiry ? 'err-expiry' : undefined}
                             />
-                            {errors.expiry && (
-                                <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans mt-1">
-                                    ⚠ {errors.expiry}
-                                </p>
-                            )}
+                            {errors.expiry && <FieldError id="err-expiry">{errors.expiry}</FieldError>}
                         </div>
                         <div>
-                            <FieldLabel>CVV</FieldLabel>
+                            <FieldLabel htmlFor="cvv">CVV</FieldLabel>
                             <InputField
+                                id="cvv"
                                 icon={Lock}
                                 name="cvv"
                                 value={form.cvv}
@@ -255,20 +277,15 @@ export default function PaymentPage() {
                                 placeholder="•••"
                                 inputMode="numeric"
                                 type="password"
+                                autoComplete="cc-csc"
+                                invalid={!!errors.cvv}
+                                aria-describedby={errors.cvv ? 'err-cvv' : undefined}
                             />
-                            {errors.cvv && (
-                                <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans mt-1">
-                                    ⚠ {errors.cvv}
-                                </p>
-                            )}
+                            {errors.cvv && <FieldError id="err-cvv">{errors.cvv}</FieldError>}
                         </div>
                     </div>
 
-                    {errors.general && (
-                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
-                            ⚠ {errors.general}
-                        </p>
-                    )}
+                    {errors.general && <FieldError id="err-general">{errors.general}</FieldError>}
 
                     <div className="border-t border-border pt-4">
                         <div className="flex items-center justify-between mb-2">

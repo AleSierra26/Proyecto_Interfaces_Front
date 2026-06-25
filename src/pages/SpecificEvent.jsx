@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, MapPin, Calendar, Clock, CheckCircle, ChevronLeft, ChevronDown, ChevronUp, ImageOff } from 'lucide-react';
+import { User, MapPin, Calendar, Clock, CheckCircle, ChevronLeft, ChevronDown, ChevronUp, ImageOff, X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { purchaseTicket, getEvent, getEventResales, purchaseResale, getMyTickets, updateBalance } from '../api';
 
@@ -43,6 +43,13 @@ export default function SpecificEvent() {
         });
 
     }, [eventId]);
+
+    useEffect(() => {
+        if (!showResales) return;
+        const onKey = (e) => { if (e.key === 'Escape') setShowResales(false); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [showResales]);
 
     const handleOpenResales = async () => {
         setShowResales(true);
@@ -218,9 +225,14 @@ export default function SpecificEvent() {
             {/* Resales modal */}
             {showResales && (
                 <>
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowResales(false)} />
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowResales(false)} aria-hidden="true" />
                     <div className="fixed inset-0 flex items-end justify-center z-50 pointer-events-none">
-                        <div className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]">
+                        <div
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="resales-title"
+                            className="bg-card w-full max-w-md rounded-t-[20px] pointer-events-auto max-h-[70vh] overflow-y-auto pb-[max(4.5rem,env(safe-area-inset-bottom))]"
+                        >
 
                             {/* Handle */}
                             <div className="flex justify-center pt-3 pb-4">
@@ -228,12 +240,24 @@ export default function SpecificEvent() {
                             </div>
 
                             <div className="px-4 pb-2">
-                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
-                                    ¡Reventas!
-                                </p>
-                                <h3 className="font-sans font-bold text-xl tracking-widest mb-4">
-                                    Tickets en reventa
-                                </h3>
+                                <div className="flex items-start justify-between mb-4">
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                            ¡Reventas!
+                                        </p>
+                                        <h3 id="resales-title" className="font-sans font-bold text-xl tracking-widest">
+                                            Tickets en reventa
+                                        </h3>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowResales(false)}
+                                        aria-label="Cerrar reventas"
+                                        className="inline-btn p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                        <X className="w-5 h-5" aria-hidden="true" />
+                                    </button>
+                                </div>
 
                                 {resalesLoading && (
                                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans py-8 text-center">

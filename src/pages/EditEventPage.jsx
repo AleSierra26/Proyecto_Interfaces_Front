@@ -292,8 +292,8 @@ export default function EditEventPage() {
                 </div>
 
                 {error && (
-                    <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground mb-4">
-                        ⚠ {error}
+                    <p role="alert" className="text-[10px] uppercase tracking-widest font-sans font-medium text-destructive mb-4 flex items-center gap-1">
+                        <span aria-hidden="true">⚠</span> {error}
                     </p>
                 )}
 

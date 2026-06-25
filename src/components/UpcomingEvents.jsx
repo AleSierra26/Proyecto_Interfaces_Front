@@ -76,10 +76,12 @@ export default function UpcomingEvents() {
             ) : (
                 <div className="space-y-3 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
                     {upcomingEvents.map((event) => (
-                        <div
+                        <button
                             key={event.id}
+                            type="button"
                             onClick={() => navigate(`/event/${event.code}`)}
-                            className="flex items-start justify-between p-4 cursor-pointer group border border-border rounded-[10px] hover:border-foreground transition-colors duration-200"
+                            aria-label={`Ver evento ${event.title}`}
+                            className="w-full text-left flex items-start justify-between p-4 cursor-pointer group border border-border rounded-[10px] hover:border-foreground transition-colors duration-200"
                         >
                             <div className="flex-1 pr-4">
                                 {/* Visual Hierarchy: date (smallest) → title (bold) → venue (muted) */}
@@ -106,7 +108,7 @@ export default function UpcomingEvents() {
                                 </div>
                                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity ml-1" aria-hidden="true" />
                             </div>
-                        </div>
+                        </button>
                     ))}
                 </div>
             )}

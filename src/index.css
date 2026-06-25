@@ -117,8 +117,19 @@
     letter-spacing: 0.05em;
   }
 
-  /* Accessible focus ring — visible only on keyboard navigation */
+  /*
+   * Accessible focus ring — visible solo en navegación por teclado.
+   */
+  :focus-visible {
+    outline: 3px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 
+  /* No mostramos el ring al hacer click con mouse (solo teclado) */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
 
   /*
    * Fitts's Law: touch targets mínimos de 44×44 px en mobile
@@ -141,6 +152,17 @@
   button:active:not(:disabled),
   a:active {
     transform: scale(0.98);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
