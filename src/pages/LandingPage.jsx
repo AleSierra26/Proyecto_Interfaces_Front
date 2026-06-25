@@ -22,7 +22,7 @@ export default function LandingPage() {
              * con el texto oscuro creando foco claro.
              */}
             <section className="flex-1 flex flex-col items-center justify-center text-center px-6 pt-16 pb-12 animate-fade-in">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
+                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
                     Bienvenido a Quorum
                 </p>
                 <h1 className="font-sans font-black text-4xl md:text-5xl tracking-tighter text-foreground leading-[1.05] mb-4">

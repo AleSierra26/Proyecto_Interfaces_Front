@@ -15,7 +15,7 @@ export default function HeroBanner() {
 
     return (
         <section className="px-4 pt-6 pb-2 animate-fade-in">
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                 {greeting}
             </p>
             <h2 className="font-sans font-bold text-2xl tracking-zen mt-0.5">

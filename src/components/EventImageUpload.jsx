@@ -27,7 +27,7 @@ export default function EventImageUpload({ eventCode, currentImageUrl, onUpload 
 
     return (
         <div className="mb-6">
-            <label className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+            <label className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
                 Imagen del evento
             </label>
             <button
@@ -45,7 +45,7 @@ export default function EventImageUpload({ eventCode, currentImageUrl, onUpload 
                         {/* Overlay on hover */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                             <ImagePlus className="w-5 h-5 text-white" />
-                            <span className="text-[10px] uppercase tracking-widest font-sans text-white">
+                            <span className="text-[12px] uppercase tracking-widest font-sans text-white">
                                 Cambiar imagen
                             </span>
                         </div>
@@ -53,7 +53,7 @@ export default function EventImageUpload({ eventCode, currentImageUrl, onUpload 
                 ) : (
                     <>
                         <ImagePlus className="w-5 h-5 text-muted-foreground" />
-                        <span className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
+                        <span className="text-[12px] uppercase tracking-widest font-sans text-muted-foreground">
                             Subir imagen
                         </span>
                     </>

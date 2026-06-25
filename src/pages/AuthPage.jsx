@@ -5,7 +5,7 @@ import { login, signup } from '../api';
 
 function FieldLabel({ htmlFor, children }) {
     return (
-        <label htmlFor={htmlFor} className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+        <label htmlFor={htmlFor} className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
             {children}
         </label>
     );
@@ -64,7 +64,7 @@ export default function AuthPage({ mode: initialMode = 'login' }) {
 
             {/* Page intro */}
             <div className="mb-8">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                     {mode === 'signup' ? 'Registro' : 'Acceso'}
                 </p>
                 <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
@@ -186,7 +186,7 @@ export default function AuthPage({ mode: initialMode = 'login' }) {
                 {/* Error message — Feedback: error en rojo + ícono + texto, nunca solo color.
                     role="alert" lo anuncia al lector de pantalla apenas aparece. */}
                 {error && (
-                    <p id="auth-error" role="alert" className="text-[10px] uppercase tracking-widest font-sans text-destructive flex items-center gap-1">
+                    <p id="auth-error" role="alert" className="text-[12px] uppercase tracking-widest font-sans text-destructive flex items-center gap-1">
                         <span aria-hidden="true">⚠</span> {error}
                     </p>
                 )}

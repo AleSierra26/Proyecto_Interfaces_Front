@@ -105,7 +105,7 @@ export default function MyTickets() {
                 {/* Header */}
                 <div className="flex items-end justify-between my-6">
                     <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             Activos
                         </p>
                         <h3 className="font-sans font-bold text-xl tracking-widest">
@@ -113,7 +113,7 @@ export default function MyTickets() {
                         </h3>
                     </div>
                     {tickets.length > 0 && (
-                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <span className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             {tickets.length} ticket{tickets.length !== 1 ? 's' : ''}
                         </span>
                     )}
@@ -134,12 +134,12 @@ export default function MyTickets() {
                         {tickets.length === 0 && (
                             <div className="flex flex-col items-center justify-center py-20 gap-3">
                                 <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
-                                    <Ticket className="w-6 h-6 text-muted-foreground/40" aria-hidden="true" />
+                                    <Ticket className="w-6 h-6 text-muted-foreground/60" aria-hidden="true" />
                                 </div>
                                 <p className="font-sans font-bold text-lg tracking-widest text-foreground">
                                     Sin tickets aún
                                 </p>
-                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
+                                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
                                     Compra tu primer ticket y aparecerá aquí
                                 </p>
                                 <button
@@ -176,8 +176,8 @@ export default function MyTickets() {
                                                 />
                                             ) : (
                                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                    <ImageOff className="text-muted-foreground/50" />
-                                                    <span className="text-muted-foreground/50 text-sm font-sans">No hay imagen para este evento</span>
+                                                    <ImageOff className="text-muted-foreground/60" />
+                                                    <span className="text-muted-foreground text-sm font-sans">No hay imagen para este evento</span>
                                                 </div>
                                             )}
                                         </div>
@@ -212,7 +212,7 @@ export default function MyTickets() {
                                                     <p className="font-sans font-bold text-base">
                                                         {ticket.event_price?.toLocaleString()}
                                                     </p>
-                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                         Coins
                                                     </p>
                                                 </div>
@@ -221,7 +221,7 @@ export default function MyTickets() {
                                             {/* Cancelled badge */}
                                             {ticket.status === 'cancelled' && (
                                                 <div className="flex items-center gap-2 bg-muted rounded-[10px] px-3 py-2 mb-3">
-                                                    <p className="text-[10px] uppercase tracking-widest font-sans text-muted-foreground">
+                                                    <p className="text-[12px] uppercase tracking-widest font-sans text-muted-foreground">
                                                         ⚠ Este evento fue cancelado · Ticket inválido
                                                     </p>
                                                 </div>
@@ -230,7 +230,7 @@ export default function MyTickets() {
                                             {/* Date & time */}
                                             <div className="flex gap-6 border-t border-border pt-3 mb-4">
                                                 <div>
-                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                         Fecha
                                                     </p>
                                                     <p className="text-xs font-sans text-foreground mt-0.5">
@@ -238,7 +238,7 @@ export default function MyTickets() {
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                         Hora
                                                     </p>
                                                     <p className="text-xs font-sans text-foreground mt-0.5">
@@ -298,7 +298,7 @@ export default function MyTickets() {
                         tabIndex={-1}
                         className="bg-card p-6 text-center rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm animate-fade-in"
                     >
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             Tu entrada
                         </p>
                         <h3 id="qr-modal-title" className="font-sans font-bold text-base tracking-widest">
@@ -309,7 +309,7 @@ export default function MyTickets() {
                             alt="QR de entrada"
                             className="w-48 h-48 rounded-[10px] mx-auto block"
                         />
-                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             Presenta este código QR en la entrada
                         </p>
                         <p className="font-mono text-xs text-muted-foreground">
@@ -351,7 +351,7 @@ export default function MyTickets() {
                                     <p id="resale-modal-title" className="font-sans font-bold text-base tracking-widest">
                                         ¡Ticket publicado!
                                     </p>
-                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                         Tu ticket está ahora disponible en el mercado de reventas
                                     </p>
                                     <button
@@ -363,7 +363,7 @@ export default function MyTickets() {
                                 </div>
                             ) : (
                                 <>
-                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                         Mercado secundario
                                     </p>
                                     <h3 id="resale-modal-title" className="font-sans font-bold text-xl tracking-widest mb-1">
@@ -374,7 +374,7 @@ export default function MyTickets() {
                                     </p>
 
                                     <div className="mb-4">
-                                        <label htmlFor="resale-price" className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+                                        <label htmlFor="resale-price" className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
                                             Tu precio de venta (Coins)
                                         </label>
                                         <div className="flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-background focus-within:border-foreground transition-colors">
@@ -402,17 +402,17 @@ export default function MyTickets() {
                                                 placeholder="Ej. 15000"
                                                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-sans"
                                             />
-                                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                            <span className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                 Coins
                                             </span>
                                         </div>
-                                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans mt-1.5">
+                                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mt-1.5">
                                             Precio original: {selectedTicket.event_price?.toLocaleString()} Coins
                                         </p>
                                     </div>
 
                                     {resaleError && (
-                                        <p id="resale-error" role="alert" className="text-[10px] uppercase tracking-widest font-sans font-medium text-destructive mb-3 flex items-center gap-1">
+                                        <p id="resale-error" role="alert" className="text-[12px] uppercase tracking-widest font-sans font-medium text-destructive mb-3 flex items-center gap-1">
                                             <span aria-hidden="true">⚠</span> {resaleError}
                                         </p>
                                     )}

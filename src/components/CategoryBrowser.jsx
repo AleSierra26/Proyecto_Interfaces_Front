@@ -19,7 +19,7 @@ export default function CategoryBrowser() {
                         <button key={cat.id} aria-label={`Explorar categoría ${cat.name}`} className='flex flex-col items-center gap-2 min-w-[80px] py-3 px-4 border-border rounded-sm bg-card hover:bg-secondary transition-colors'
                         >
                             <Icon className='w-5 h-5 text-foreground' aria-hidden="true" />
-                            <span className='text-[10px] uppercase tracking-widest font-sans font-medium text-foreground'>
+                            <span className='text-[12px] uppercase tracking-widest font-sans font-medium text-foreground'>
                                 {cat.name}
                             </span>
                         </button>

@@ -7,7 +7,7 @@ import EventImageUpload from '../components/EventImageUpload';
 
 function FieldLabel({ htmlFor, children }) {
     return (
-        <label htmlFor={htmlFor} className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+        <label htmlFor={htmlFor} className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
             {children}
         </label>
     );
@@ -95,7 +95,7 @@ export default function CreateEventPage() {
     if (newEventCode) {
         return (
             <div className="min-h-screen bg-background max-w-md mx-auto px-4 pt-10 pb-28">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Paso 2 de 2</p>
+                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">Paso 2 de 2</p>
                 <h2 className="font-sans font-bold text-2xl tracking-widest mb-6">Añade una imagen</h2>
                 <EventImageUpload eventCode={newEventCode} onUpload={() => {}} />
                 <button
@@ -147,7 +147,7 @@ export default function CreateEventPage() {
 
                 {/* Date & time */}
                 <div className="mb-2">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
                         Fecha y hora
                     </p>
                     <div className="grid grid-cols-2 gap-3">
@@ -180,7 +180,7 @@ export default function CreateEventPage() {
 
                 {/* Location */}
                 <div className="space-y-4 mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Ubicación
                     </p>
                     <div>
@@ -210,11 +210,11 @@ export default function CreateEventPage() {
 
                 {/* Tickets */}
                 <div className="space-y-4 mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Tickets
                     </p>
                     <div>
-                        <span id="ticket-type-label" className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+                        <span id="ticket-type-label" className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
                             Tipo de entrada
                         </span>
                         <div className="flex gap-2" role="group" aria-labelledby="ticket-type-label">

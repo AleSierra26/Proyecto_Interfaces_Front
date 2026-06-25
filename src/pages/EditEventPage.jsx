@@ -6,7 +6,7 @@ import EventImageUpload from '../components/EventImageUpload';
 
 function FieldLabel({ htmlFor, children }) {
     return (
-        <label htmlFor={htmlFor} className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+        <label htmlFor={htmlFor} className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
             {children}
         </label>
     );
@@ -110,7 +110,7 @@ export default function EditEventPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-background max-w-md mx-auto flex items-center justify-center">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                     Cargando...
                 </p>
             </div>
@@ -128,7 +128,7 @@ export default function EditEventPage() {
                     className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6"
                 >
                     <ChevronLeft className="w-4 h-4" />
-                    <span className="text-[10px] uppercase tracking-widest font-sans">Volver</span>
+                    <span className="text-[12px] uppercase tracking-widest font-sans">Volver</span>
                 </button>
 
                 <EventImageUpload
@@ -138,7 +138,7 @@ export default function EditEventPage() {
                 />
 
                 <div className="mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Editar
                     </p>
                     <h2 className="font-sans font-bold text-2xl tracking-widest">
@@ -177,7 +177,7 @@ export default function EditEventPage() {
 
                 {/* Date & time */}
                 <div className="mb-2">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
                         Fecha y hora
                     </p>
                     <div className="grid grid-cols-2 gap-3">
@@ -210,7 +210,7 @@ export default function EditEventPage() {
 
                 {/* Location */}
                 <div className="space-y-4 mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Ubicación
                     </p>
                     <div>
@@ -240,11 +240,11 @@ export default function EditEventPage() {
 
                 {/* Tickets */}
                 <div className="space-y-4 mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Tickets
                     </p>
                     <div>
-                        <span id="ticket-type-label" className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+                        <span id="ticket-type-label" className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
                             Tipo de entrada
                         </span>
                         <div className="flex gap-2" role="group" aria-labelledby="ticket-type-label">
@@ -297,7 +297,7 @@ export default function EditEventPage() {
                 </div>
 
                 {error && (
-                    <p role="alert" className="text-[10px] uppercase tracking-widest font-sans font-medium text-destructive mb-4 flex items-center gap-1">
+                    <p role="alert" className="text-[12px] uppercase tracking-widest font-sans font-medium text-destructive mb-4 flex items-center gap-1">
                         <span aria-hidden="true">⚠</span> {error}
                     </p>
                 )}

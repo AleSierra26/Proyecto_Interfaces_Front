@@ -5,7 +5,7 @@ import { updateBalance } from '../api';
 
 function FieldLabel({ htmlFor, children }) {
     return (
-        <label htmlFor={htmlFor} className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+        <label htmlFor={htmlFor} className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
             {children}
         </label>
     );
@@ -28,7 +28,7 @@ function InputField({ icon: Icon, invalid, ...props }) {
 
 function FieldError({ id, children }) {
     return (
-        <p id={id} role="alert" className="text-[10px] uppercase tracking-widest text-destructive font-sans font-medium mt-1.5 flex items-center gap-1">
+        <p id={id} role="alert" className="text-[12px] uppercase tracking-widest text-destructive font-sans font-medium mt-1.5 flex items-center gap-1">
             <span aria-hidden="true">⚠</span> {children}
         </p>
     );
@@ -139,7 +139,7 @@ export default function PaymentPage() {
                     <CheckCircle className="w-8 h-8 text-primary-foreground" />
                 </div>
                 <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Pago confirmado
                     </p>
                     <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
@@ -175,11 +175,11 @@ export default function PaymentPage() {
                     className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6"
                 >
                     <ChevronLeft className="w-4 h-4" />
-                    <span className="text-[10px] uppercase tracking-widest font-sans">Volver</span>
+                    <span className="text-[12px] uppercase tracking-widest font-sans">Volver</span>
                 </button>
 
                 <div className="mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Pago seguro
                     </p>
                     <h2 className="font-sans font-bold text-2xl tracking-widest">
@@ -192,7 +192,7 @@ export default function PaymentPage() {
                     <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
                         ¿Cuántas Coins quieres comprar?
                     </p>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
                         (Recuerda que 1 Coin = 1 CLP)
                     </p>
                     <div>
@@ -289,7 +289,7 @@ export default function PaymentPage() {
 
                     <div className="border-t border-border pt-4">
                         <div className="flex items-center justify-between mb-2">
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                 Valor Coins a comprar
                             </p>
                             <p className="font-sans font-medium text-sm">
@@ -297,7 +297,7 @@ export default function PaymentPage() {
                             </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                 Costos de servicio (5%)
                             </p>
                             <p className="font-sans font-medium text-sm">
@@ -305,7 +305,7 @@ export default function PaymentPage() {
                             </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                 Total a pagar
                             </p>
                             <p className="font-sans font-bold text-xl">
@@ -319,7 +319,7 @@ export default function PaymentPage() {
                         >
                             {loading ? 'Procesando pago...' : 'Confirmar pago'}
                         </button>
-                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans text-center mt-3">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans text-center mt-3">
                             🔒 Pago simulado · Ningún cargo real será efectuado
                         </p>
                     </div>

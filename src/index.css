@@ -23,7 +23,8 @@
     --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 45%;
+
+    --muted-foreground: 0 0% 38%;
 
     --accent: 0 0% 35%;
     --accent-foreground: 0 0% 100%;
@@ -115,6 +116,8 @@
   body {
     @apply bg-background text-foreground font-sans;
     letter-spacing: 0.05em;
+    /* Interlineado generoso para legibilidad (slide Tipografía: line-height ≥ 1.5) */
+    line-height: 1.5;
   }
 
   /*

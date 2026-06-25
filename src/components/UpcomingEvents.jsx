@@ -41,7 +41,7 @@ export default function UpcomingEvents() {
             {/* Section header — Visual Hierarchy: title > location chip */}
             <div className="flex items-center justify-between mb-5">
                 <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Cerca de ti
                     </p>
                     <h3 className="font-sans font-bold text-xl tracking-zen">
@@ -51,7 +51,7 @@ export default function UpcomingEvents() {
                 {/* Location chip — Gestalt Closure: pill shape implies a self-contained datum */}
                 <div className="flex items-center gap-1 bg-muted rounded-full px-2.5 py-1">
                     <MapPin className="w-3 h-3 text-muted-foreground" aria-hidden="true" />
-                    <span className="text-[9px] font-sans uppercase tracking-widest text-muted-foreground">
+                    <span className="text-[12px] font-sans uppercase tracking-widest text-muted-foreground">
                         Santiago
                     </span>
                 </div>
@@ -85,13 +85,13 @@ export default function UpcomingEvents() {
                         >
                             <div className="flex-1 pr-4">
                                 {/* Visual Hierarchy: date (smallest) → title (bold) → venue (muted) */}
-                                <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans font-medium">
+                                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans font-medium">
                                     {event.date}
                                 </p>
                                 <h4 className="font-sans font-bold text-sm mt-1 tracking-zen group-hover:text-accent transition-colors">
                                     {event.title}
                                 </h4>
-                                <p className="text-[11px] text-muted-foreground font-sans mt-0.5">
+                                <p className="text-[12px] text-muted-foreground font-sans mt-0.5">
                                     {event.venue}
                                 </p>
                             </div>
@@ -102,7 +102,7 @@ export default function UpcomingEvents() {
                                     <span className="font-sans font-bold text-sm">
                                         {event.price}
                                     </span>
-                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                         Coins
                                     </p>
                                 </div>

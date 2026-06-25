@@ -39,7 +39,7 @@ export default function BottomNav() {
                                   }`}                                                                                                      
                               />
                            <span                                                                                                        
-                                 className={`text-[9px] uppercase tracking-widest font-sans transition-colors duration-200 ${             
+                                 className={`text-[12px] uppercase tracking-widest font-sans transition-colors duration-200 ${             
                                         isActive ? 'text-foreground font-medium' : 'text-muted-foreground'                                   
                                     }`}                                                                                                      
                                 >

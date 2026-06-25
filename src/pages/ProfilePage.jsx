@@ -5,7 +5,7 @@ import { updateProfile, uploadAvatar } from '../api';
 
 function FieldLabel({ htmlFor, children }) {
     return (
-        <label htmlFor={htmlFor} className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
+        <label htmlFor={htmlFor} className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground mb-1.5">
             {children}
         </label>
     );
@@ -141,13 +141,13 @@ export default function ProfilePage() {
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            <span className="text-muted-foreground/50 text-xs font-sans">
+                            <span className="text-muted-foreground text-xs font-sans">
                                 Añade tu foto
                             </span>
                         )}
                         {avatarUploading && (
                             <div className="absolute inset-0 bg-background/70 flex items-center justify-center rounded-full">
-                                <span className="text-[9px] uppercase tracking-widest font-sans text-muted-foreground">
+                                <span className="text-[12px] uppercase tracking-widest font-sans text-muted-foreground">
                                     Subiendo...
                                 </span>
                             </div>
@@ -183,10 +183,10 @@ export default function ProfilePage() {
                         <h2 className="font-sans font-bold text-l tracking-widest">Mis Coins: {user.balance} </h2>
                     </div>
                     <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             Miembro desde {user.member_since}
                         </p>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             {user.email}
                         </p>
                     </div>
@@ -204,7 +204,7 @@ export default function ProfilePage() {
             <section className="px-4 pt-6">
                 <div className="flex items-center justify-between mb-4">
                     <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             Cuenta
                         </p>
                         <h3 className="font-sans font-bold text-lg tracking-widest">
@@ -226,15 +226,15 @@ export default function ProfilePage() {
                     /* Read-only view */
                     <div className="space-y-3 border border-border rounded-[10px] bg-card p-4">
                         <div>
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Nombre</p>
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">Nombre</p>
                             <p className="text-sm font-sans text-foreground mt-0.5">{user.first_name}</p>
                         </div>
                         <div className="border-t border-border pt-3">
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Apellido</p>
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">Apellido</p>
                             <p className="text-sm font-sans text-foreground mt-0.5">{user.last_name}</p>
                         </div>
                         <div className="border-t border-border pt-3">
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Correo electrónico</p>
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">Correo electrónico</p>
                             <p className="text-sm font-sans text-foreground mt-0.5">{user.email}</p>
                         </div>
                     </div>
@@ -278,7 +278,7 @@ export default function ProfilePage() {
                         </div>
 
                         {saveError && (
-                            <p role="alert" className="text-[10px] uppercase tracking-widest font-sans font-medium text-destructive flex items-center gap-1">
+                            <p role="alert" className="text-[12px] uppercase tracking-widest font-sans font-medium text-destructive flex items-center gap-1">
                                 <span aria-hidden="true">⚠</span> {saveError}
                             </p>
                         )}

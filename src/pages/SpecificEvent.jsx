@@ -132,7 +132,7 @@ export default function SpecificEvent() {
                     <CheckCircle className="w-8 h-8 text-primary-foreground" />
                 </div>
                 <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Pago confirmado
                     </p>
                     <h2 className="font-sans font-bold text-2xl tracking-widest mt-1">
@@ -144,21 +144,21 @@ export default function SpecificEvent() {
                 </div>
                 <div className="w-full border border-border rounded-[10px] bg-card p-4 text-left space-y-3">
                     <div>
-                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Evento</p>
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">Evento</p>
                         <p className="text-sm font-sans font-medium text-foreground mt-0.5">{event.title}</p>
                     </div>
                     <div className="flex gap-6">
                         <div>
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Lugar</p>
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">Lugar</p>
                             <p className="text-xs font-sans text-foreground mt-0.5">{event.venue}</p>
                         </div>
                         <div>
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Fecha</p>
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">Fecha</p>
                             <p className="text-xs font-sans text-foreground mt-0.5">{event.date}</p>
                         </div>
                     </div>
                     <div className="border-t border-border pt-3 flex items-center justify-between">
-                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">Total pagado</p>
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">Total pagado</p>
                         <p className="font-sans font-bold text-base">${event.price.toLocaleString()} CLP</p>
                     </div>
                 </div>
@@ -195,7 +195,7 @@ export default function SpecificEvent() {
         return (
             <div className="min-h-screen bg-background max-w-md mx-auto flex flex-col items-center justify-center gap-4 px-4">
                 <p className="font-sans font-bold text-2xl tracking-widest">Evento no encontrado</p>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans text-center">
                     El evento que buscas no existe o ya no está disponible.
                 </p>
                 <button
@@ -240,7 +240,7 @@ export default function SpecificEvent() {
                             <div className="px-4 pb-2">
                                 <div className="flex items-start justify-between mb-4">
                                     <div>
-                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                             ¡Reventas!
                                         </p>
                                         <h3 id="resales-title" className="font-sans font-bold text-xl tracking-widest">
@@ -258,7 +258,7 @@ export default function SpecificEvent() {
                                 </div>
 
                                 {resalesLoading && (
-                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans py-8 text-center">
+                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans py-8 text-center">
                                         Cargando...
                                     </p>
                                 )}
@@ -266,7 +266,7 @@ export default function SpecificEvent() {
                                 {!resalesLoading && resales.length === 0 && (
                                     <div className="flex flex-col items-center py-10 gap-2">
                                         <p className="font-sans font-bold text-base tracking-widest">Sin reventas</p>
-                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans text-center">
                                             No hay tickets en reventa para este evento
                                         </p>
                                     </div>
@@ -291,7 +291,7 @@ export default function SpecificEvent() {
                                                     <p className="font-sans font-medium text-sm text-foreground">
                                                         {resale.seller_name}
                                                     </p>
-                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                         Vendedor verificado
                                                     </p>
                                                 </div>
@@ -301,7 +301,7 @@ export default function SpecificEvent() {
                                                     <p className="font-sans font-bold text-base">
                                                         {resale.price.toLocaleString()}
                                                     </p>
-                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                         Coins
                                                     </p>
                                                 </div>
@@ -327,7 +327,7 @@ export default function SpecificEvent() {
                 className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6"
             >
                 <ChevronLeft className="w-4 h-4" />
-                <span className="text-[10px] uppercase tracking-widest font-sans">Volver</span>
+                <span className="text-[12px] uppercase tracking-widest font-sans">Volver</span>
             </button>
 
             {/* Event image */}
@@ -341,18 +341,18 @@ export default function SpecificEvent() {
                         />
                     ) : (
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <ImageOff className="text-muted-foreground/50" />
-                            <span className="text-muted-foreground/50 text-sm font-sans">No hay imagen para este evento</span>
+                            <ImageOff className="text-muted-foreground/60" />
+                            <span className="text-muted-foreground text-sm font-sans">No hay imagen para este evento</span>
                         </div>
                     )}
                 </div>
                 {almostGone && (
-                    <span className="absolute top-3 right-3 bg-background text-foreground text-[9px] uppercase tracking-widest font-sans font-medium px-2.5 py-1 rounded-[10px] border border-border">
+                    <span className="absolute top-3 right-3 bg-background text-foreground text-[12px] uppercase tracking-widest font-sans font-medium px-2.5 py-1 rounded-[10px] border border-border">
                         ¡Últimos tickets!
                     </span>
                 )}
                 {event.status === 'finished' && (
-                    <span className="absolute top-3 left-3 bg-muted text-muted-foreground text-[9px] uppercase tracking-widest font-sans font-medium px-2.5 py-1 rounded-[10px] border border-border">
+                    <span className="absolute top-3 left-3 bg-muted text-muted-foreground text-[12px] uppercase tracking-widest font-sans font-medium px-2.5 py-1 rounded-[10px] border border-border">
                         Evento finalizado
                     </span>
                 )}
@@ -366,7 +366,7 @@ export default function SpecificEvent() {
                         <h2 className="font-sans font-bold text-2xl tracking-widest leading-tight">
                             {event.title}
                         </h2>
-                        <p className="text-[11px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             Código de evento: {event.code}
                         </p>
                     </div>
@@ -375,7 +375,7 @@ export default function SpecificEvent() {
                             {event.price === 0 ? 'GRATIS' : `${event.price.toLocaleString()}`}
                         </p>
                         {event.price > 0 && (
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                 Coins
                             </p>
                         )}
@@ -386,7 +386,7 @@ export default function SpecificEvent() {
 
                 {/* Event details */}
                 <div className="space-y-3 mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Detalles
                     </p>
                     <div className="flex items-center gap-3">
@@ -415,14 +415,14 @@ export default function SpecificEvent() {
                 {event.totalCapacity > 0 && (
                     <div className="mb-6">
                         <div className="flex items-center justify-between mb-1.5">
-                            <p className={`text-[10px] uppercase tracking-widest font-sans font-medium ${
+                            <p className={`text-[12px] uppercase tracking-widest font-sans font-medium ${
                                 soldOut ? 'text-destructive' :
                                 almostGone ? 'text-foreground' :
                                 'text-muted-foreground'
                             }`}>
                                 {soldOut ? 'Agotado' : almostGone ? `¡Solo quedan ${ticketsLeft}!` : `${ticketsLeft} disponibles`}
                             </p>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                 {soldPct}% vendido
                             </p>
                         </div>
@@ -449,7 +449,7 @@ export default function SpecificEvent() {
 
                 {/* Description — Progressive Disclosure: truncate long text, reveal on demand */}
                 <div className="mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
                         Sobre el evento
                     </p>
                     <p className={`text-sm font-sans text-foreground leading-relaxed transition-all ${
@@ -460,7 +460,7 @@ export default function SpecificEvent() {
                     {descLong && (
                         <button
                             onClick={() => setDescExpanded((s) => !s)}
-                            className="mt-2 flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground font-sans hover:text-foreground transition-colors"
+                            className="mt-2 flex items-center gap-1 text-[12px] uppercase tracking-widest text-muted-foreground font-sans hover:text-foreground transition-colors"
                         >
                             {descExpanded ? (
                                 <><ChevronUp className="w-3 h-3" aria-hidden="true" /> Leer menos</>
@@ -475,7 +475,7 @@ export default function SpecificEvent() {
 
                 {/* Organizer */}
                 <div className="mb-6">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
                         Organizador
                     </p>
                     <div className="flex items-center gap-3">
@@ -497,7 +497,7 @@ export default function SpecificEvent() {
                                 </p>
                                 <CheckCircle className="w-3.5 h-3.5 text-foreground" />
                             </div>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mt-0.5">
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mt-0.5">
                                 Organiza eventos desde {event.organizer_since}
                             </p>
                         </div>

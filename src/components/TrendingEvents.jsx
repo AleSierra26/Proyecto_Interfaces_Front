@@ -39,7 +39,7 @@ export default function TrendingEvents() {
             {/* Section header */}
             <div className="flex items-end justify-between mb-4 px-4">
                 <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                         Destacados
                     </p>
                     <h3 className="font-sans font-bold text-xl tracking-zen">
@@ -70,8 +70,8 @@ export default function TrendingEvents() {
                                     />
                                 ) : (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                        <ImageOff className="text-muted-foreground/50" aria-hidden="true" />
-                                        <span className="text-muted-foreground/50 text-sm font-sans">Sin imagen</span>
+                                        <ImageOff className="text-muted-foreground/60" aria-hidden="true" />
+                                        <span className="text-muted-foreground text-sm font-sans">Sin imagen</span>
                                     </div>
                                 )}
                             </div>
@@ -80,12 +80,12 @@ export default function TrendingEvents() {
                                 <h4 className="font-sans font-bold text-sm tracking-zen group-hover:text-accent transition-colors truncate">
                                     {event.title}
                                 </h4>
-                                <p className="text-[10px] text-muted-foreground font-sans mt-0.5 truncate">
+                                <p className="text-[12px] text-muted-foreground font-sans mt-0.5 truncate">
                                     {event.venue} · {event.date}
                                 </p>
                                 <p className="font-sans font-bold text-sm mt-1">
                                     {event.price}
-                                    <span className="text-[9px] font-normal text-muted-foreground uppercase tracking-widest ml-1">Coins</span>
+                                    <span className="text-[12px] font-normal text-muted-foreground uppercase tracking-widest ml-1">Coins</span>
                                 </p>
                             </div>
                         </button>

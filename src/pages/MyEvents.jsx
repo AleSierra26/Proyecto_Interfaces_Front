@@ -104,13 +104,13 @@ export default function MyEvents() {
                                 <p className="text-sm font-sans text-foreground mt-2">
                                     {selectedEvent.title}
                                 </p>
-                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mt-2">
+                                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mt-2">
                                     Esta acción no se puede deshacer. Todos los tickets comprados quedarán inválidos.
                                 </p>
                             </div>
 
                             {deleteError && (
-                                <p role="alert" className="text-[10px] uppercase tracking-widest font-sans font-medium text-destructive text-center flex items-center justify-center gap-1">
+                                <p role="alert" className="text-[12px] uppercase tracking-widest font-sans font-medium text-destructive text-center flex items-center justify-center gap-1">
                                     <span aria-hidden="true">⚠</span> {deleteError}
                                 </p>
                             )}
@@ -154,7 +154,7 @@ export default function MyEvents() {
                             <div className="px-4 pt-2 pb-2">
                                 <div className="flex items-start justify-between mb-4">
                                     <div>
-                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                             Lista de asistentes
                                         </p>
                                         <h3 id="attendees-modal-title" className="font-sans font-bold text-lg tracking-widest">
@@ -171,7 +171,7 @@ export default function MyEvents() {
                                 </div>
 
                                 {attendeesLoading && (
-                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans py-8 text-center">
+                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans py-8 text-center">
                                         Cargando...
                                     </p>
                                 )}
@@ -179,12 +179,12 @@ export default function MyEvents() {
                                 {!attendeesLoading && attendees.length === 0 && (
                                     <div className="flex flex-col items-center py-10 gap-2">
                                         <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-1">
-                                            <Users className="w-5 h-5 text-muted-foreground/40" />
+                                            <Users className="w-5 h-5 text-muted-foreground/60" />
                                         </div>
                                         <p className="font-sans font-bold text-base tracking-widest">
                                             Sin asistentes aún
                                         </p>
-                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center">
+                                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans text-center">
                                             Nadie ha comprado un ticket todavía
                                         </p>
                                     </div>
@@ -192,7 +192,7 @@ export default function MyEvents() {
 
                                 {!attendeesLoading && attendees.length > 0 && (
                                     <>
-                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
+                                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-3">
                                             {attendees.filter(a => a.status !== 'cancelled').length} confirmado{attendees.filter(a => a.status !== 'cancelled').length !== 1 ? 's' : ''}
                                         </p>
                                         <div className="space-y-2">
@@ -221,12 +221,12 @@ export default function MyEvents() {
                                                             <p className="font-sans font-medium text-sm text-foreground">
                                                                 {attendee.buyer_name}
                                                             </p>
-                                                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                                 {attendee.buyer_email}
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <span className={`text-[9px] uppercase tracking-widest font-sans font-medium px-2 py-1 rounded-[6px] ${
+                                                    <span className={`text-[12px] uppercase tracking-widest font-sans font-medium px-2 py-1 rounded-[6px] ${
                                                         attendee.status === 'cancelled'
                                                             ? 'bg-muted text-muted-foreground'
                                                             : attendee.status === 'used'
@@ -253,7 +253,7 @@ export default function MyEvents() {
                 {/* Header */}
                 <section className="flex items-center justify-between px-4 pt-6 pb-5 border-b border-border">
                     <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">
+                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                             Organiza
                         </p>
                         <h3 className="font-sans font-bold text-xl tracking-widest">
@@ -279,7 +279,7 @@ export default function MyEvents() {
                     ) : (
                         <>
                             {events.length > 0 && (
-                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
+                                <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans mb-4">
                                     Tienes {events.length} evento{events.length !== 1 ? 's' : ''}
                                 </p>
                             )}
@@ -288,12 +288,12 @@ export default function MyEvents() {
                             {events.length === 0 && (
                                 <div className="flex flex-col items-center justify-center py-20 gap-3">
                                     <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-1">
-                                        <CalendarDays className="w-6 h-6 text-muted-foreground/40" />
+                                        <CalendarDays className="w-6 h-6 text-muted-foreground/60" />
                                     </div>
                                     <p className="font-sans font-bold text-lg tracking-widest text-foreground">
                                         Sin eventos aún
                                     </p>
-                                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
+                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans text-center max-w-[200px]">
                                         Crea tu primer evento y aparecerá aquí
                                     </p>
                                     <button
@@ -327,8 +327,8 @@ export default function MyEvents() {
                                                     />
                                                 ) : (
                                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                        <ImageOff className="text-muted-foreground/50" aria-hidden="true" />
-                                                        <span className="text-muted-foreground/50 text-sm font-sans">Sin imagen</span>
+                                                        <ImageOff className="text-muted-foreground/60" aria-hidden="true" />
+                                                        <span className="text-muted-foreground text-sm font-sans">Sin imagen</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -336,7 +336,7 @@ export default function MyEvents() {
                                             {/* Copy link button — top right corner of image */}
                                             <button
                                                 onClick={(e) => handleCopyLink(e, event.code)}
-                                                className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-background/90 backdrop-blur-sm border border-border text-foreground font-sans font-medium text-[9px] uppercase tracking-widest rounded-[10px] hover:bg-background transition-all"
+                                                className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-background/90 backdrop-blur-sm border border-border text-foreground font-sans font-medium text-[12px] uppercase tracking-widest rounded-[10px] hover:bg-background transition-all"
                                                 aria-label="Copiar enlace del evento"
                                             >
                                                 {copiedCode === event.code ? (
@@ -372,7 +372,7 @@ export default function MyEvents() {
                                                         {event.price === 0 ? 'GRATIS' : `${event.price?.toLocaleString()}`}
                                                     </p>
                                                     {event.price > 0 && (
-                                                        <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                        <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                             Coins
                                                         </p>
                                                     )}
@@ -382,7 +382,7 @@ export default function MyEvents() {
                                             {/* Date & time */}
                                             <div className="flex gap-6 border-t border-border pt-3 mb-4">
                                                 <div>
-                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                         Fecha
                                                     </p>
                                                     <p className="text-xs font-sans text-foreground mt-0.5">
@@ -390,7 +390,7 @@ export default function MyEvents() {
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-sans">
+                                                    <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
                                                         Hora
                                                     </p>
                                                     <p className="text-xs font-sans text-foreground mt-0.5">

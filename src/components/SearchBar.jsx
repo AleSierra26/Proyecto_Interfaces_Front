@@ -43,7 +43,7 @@ export default function SearchBar() {
                         tabIndex={-1}
                         className="bg-card p-4 rounded-[10px] space-y-3 pointer-events-auto w-11/12 max-w-sm animate-fade-in shadow-md"
                     >
-                        <label id="code-modal-title" htmlFor="event-code" className="block text-[10px] uppercase tracking-widest font-sans font-medium text-muted-foreground">
+                        <label id="code-modal-title" htmlFor="event-code" className="block text-[12px] uppercase tracking-widest font-sans font-medium text-muted-foreground">
                             Código del evento
                         </label>
                         <div className='flex items-center gap-2 border border-border rounded-[10px] px-3 py-2.5 bg-card focus-within:border-foreground transition-colors'>
