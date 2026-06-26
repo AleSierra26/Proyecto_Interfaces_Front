@@ -20,6 +20,10 @@ export default function SpecificEvent() {
     const [ownsEvent, setOwnsEvent] = useState(false);
     const [saveError, setSaveError] = useState('');
     const [success, setSuccess] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [insufficientOpen, setInsufficientOpen] = useState(false);
+    const [pending, setPending] = useState(null);
+    const [purchasing, setPurchasing] = useState(false);
 
     useEffect(() => {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -46,6 +50,8 @@ export default function SpecificEvent() {
     }, [eventId]);
 
     const resalesRef = useFocusTrap(showResales, () => setShowResales(false));
+    const confirmRef = useFocusTrap(confirmOpen, () => { if (!purchasing) setConfirmOpen(false); });
+    const insufficientRef = useFocusTrap(insufficientOpen, () => setInsufficientOpen(false));
 
     const handleOpenResales = async () => {
         setShowResales(true);
@@ -55,7 +61,7 @@ export default function SpecificEvent() {
         setResalesLoading(false);
     };
 
-    const handlePurchase = async () => {
+    const requestPurchase = (purchase) => {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!currentUser) {
             navigate('/auth');
@@ -63,55 +69,41 @@ export default function SpecificEvent() {
         }
 
         if (currentUser.balance < event.price) {
-            alert('No tienes suficientes fondos! Por favor, recarga tu cuenta antes de comprar un ticket.');
+            setInsufficientOpen(true);
             return;
         }
 
-        try {
-            const ticketData = await purchaseTicket(currentUser.id, eventId);
-            if (ticketData.error) {
-                setSaveError(ticketData.error);
-                return;
-            }
-
-            const balanceData = await updateBalance(currentUser.id, currentUser.balance - event.price);
-            if (balanceData.error) {
-                setSaveError(balanceData.error);
-                return;
-            }
-
-            const updatedUser = { ...currentUser, balance: currentUser.balance - event.price };
-            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-            setSaveError('');
-            setHasTicket(true);
-            setSuccess(true);
-        } catch (error) {
-            setSaveError('No se pudo completar la compra.');
-        }
+        setSaveError('');
+        setPending(purchase);
+        setConfirmOpen(true);
     };
 
-    const handlePurchaseResale = async (resaleId) => {
+    const handleConfirmPurchase = async () => {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (!currentUser) {
-            navigate('/auth');
-            return;
-        }
+        if (!currentUser || !pending) return;
 
-        if (currentUser.balance < event.price) {
-            alert('No tienes suficientes fondos! Por favor, recarga tu cuenta antes de comprar un ticket.');
-            return;
-        }
-
+        setPurchasing(true);
         try {
-            const resaleData = await purchaseResale(resaleId, currentUser.id);
-            if (resaleData.error) {
-                setSaveError(resaleData.error);
-                return;
+            if (pending.type === 'resale') {
+                const resaleData = await purchaseResale(pending.resaleId, currentUser.id);
+                if (resaleData.error) {
+                    setSaveError(resaleData.error);
+                    setPurchasing(false);
+                    return;
+                }
+            } else {
+                const ticketData = await purchaseTicket(currentUser.id, eventId);
+                if (ticketData.error) {
+                    setSaveError(ticketData.error);
+                    setPurchasing(false);
+                    return;
+                }
             }
 
             const balanceData = await updateBalance(currentUser.id, currentUser.balance - event.price);
             if (balanceData.error) {
                 setSaveError(balanceData.error);
+                setPurchasing(false);
                 return;
             }
 
@@ -119,9 +111,13 @@ export default function SpecificEvent() {
             localStorage.setItem('currentUser', JSON.stringify(updatedUser));
             setSaveError('');
             setHasTicket(true);
+            setConfirmOpen(false);
+            setShowResales(false);
+            setPurchasing(false);
             setSuccess(true);
         } catch (error) {
             setSaveError('No se pudo completar la compra.');
+            setPurchasing(false);
         }
     };
 
@@ -208,6 +204,7 @@ export default function SpecificEvent() {
         );
     }
 
+    const currentBalance = JSON.parse(localStorage.getItem('currentUser'))?.balance ?? 0;
     const ticketsLeft = event.totalCapacity - event.soldTickets;
     const soldOut = ticketsLeft <= 0;
     const almostGone = !soldOut && ticketsLeft <= 15;
@@ -218,6 +215,124 @@ export default function SpecificEvent() {
 
     return (
         <>
+            {confirmOpen && (
+                <>
+                    <div
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
+                        onClick={() => { if (!purchasing) setConfirmOpen(false); }}
+                        aria-hidden="true"
+                    />
+                    <div className="fixed inset-0 flex items-center justify-center z-[70] px-4 pointer-events-none">
+                        <div
+                            ref={confirmRef}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="confirm-title"
+                            aria-describedby="confirm-desc"
+                            tabIndex={-1}
+                            className="bg-card w-full max-w-sm rounded-[20px] border border-border p-6 pointer-events-auto"
+                        >
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
+                                Confirmar compra
+                            </p>
+                            <h3 id="confirm-title" className="font-sans font-bold text-xl tracking-widest mt-1">
+                                {pending?.type === 'resale' ? '¿Comprar este ticket en reventa?' : '¿Comprar este ticket?'}
+                            </h3>
+                            <p id="confirm-desc" className="text-sm font-sans text-muted-foreground leading-relaxed mt-3">
+                                Estás a punto de comprar un ticket para{' '}
+                                <span className="text-foreground font-medium">{event.title}</span>. Esta acción descontará Coins de tu balance.
+                            </p>
+
+                            <div className="flex items-center justify-between border border-border rounded-[10px] bg-background px-3 py-2.5 mt-4">
+                                <span className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
+                                    Total a pagar
+                                </span>
+                                <span className="font-sans font-bold text-lg">
+                                    {event.price === 0 ? 'GRATIS' : `${event.price.toLocaleString()} Coins`}
+                                </span>
+                            </div>
+
+                            {saveError && (
+                                <p role="alert" className="text-[12px] uppercase tracking-widest text-destructive font-sans font-medium mt-3 flex items-center gap-1">
+                                    <span aria-hidden="true">⚠</span> {saveError}
+                                </p>
+                            )}
+
+                            <div className="flex gap-2 mt-5">
+                                <button
+                                    type="button"
+                                    onClick={() => setConfirmOpen(false)}
+                                    disabled={purchasing}
+                                    className="flex-1 py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleConfirmPurchase}
+                                    disabled={purchasing}
+                                    className="flex-1 py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {purchasing ? 'Procesando...' : 'Confirmar compra'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {insufficientOpen && (
+                <>
+                    <div
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
+                        onClick={() => setInsufficientOpen(false)}
+                        aria-hidden="true"
+                    />
+                    <div className="fixed inset-0 flex items-center justify-center z-[70] px-4 pointer-events-none">
+                        <div
+                            ref={insufficientRef}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="insufficient-title"
+                            aria-describedby="insufficient-desc"
+                            tabIndex={-1}
+                            className="bg-card w-full max-w-sm rounded-[20px] border border-border p-6 pointer-events-auto"
+                        >
+                            <p className="text-[12px] uppercase tracking-widest text-muted-foreground font-sans">
+                                Fondos insuficientes
+                            </p>
+                            <h3 id="insufficient-title" className="font-sans font-bold text-xl tracking-widest mt-1">
+                                No tienes suficientes Coins
+                            </h3>
+                            <p id="insufficient-desc" className="text-sm font-sans text-muted-foreground leading-relaxed mt-3">
+                                Este ticket cuesta{' '}
+                                <span className="text-foreground font-medium">{event.price.toLocaleString()} Coins</span>{' '}
+                                y tu balance actual es de{' '}
+                                <span className="text-foreground font-medium">{currentBalance.toLocaleString()} Coins</span>.
+                                Recarga tu cuenta para continuar con la compra.
+                            </p>
+
+                            <div className="flex gap-2 mt-5">
+                                <button
+                                    type="button"
+                                    onClick={() => setInsufficientOpen(false)}
+                                    className="flex-1 py-3 border border-border text-muted-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:border-foreground hover:text-foreground transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/payment')}
+                                    className="flex-1 py-3 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
+                                >
+                                    Recargar Coins
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
             {/* Resales modal */}
             {showResales && (
                 <>
@@ -306,7 +421,7 @@ export default function SpecificEvent() {
                                                     </p>
                                                 </div>
                                                 <button
-                                                    onClick={() => handlePurchaseResale(resale.id)}
+                                                    onClick={() => requestPurchase({ type: 'resale', resaleId: resale.id })}
                                                     className="px-3 py-2 bg-primary text-primary-foreground font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] hover:opacity-90 transition-opacity"
                                                 >
                                                     Comprar
@@ -522,7 +637,7 @@ export default function SpecificEvent() {
                     <div className="flex gap-2">
                         <button
                             disabled={soldOut || hasTicket}
-                            onClick={handlePurchase}
+                            onClick={() => requestPurchase({ type: 'direct' })}
                             className={`flex-1 py-3 font-sans font-medium text-xs uppercase tracking-widest rounded-[10px] transition-all ${
                                 soldOut || hasTicket || ownsEvent
                                     ? 'bg-muted text-muted-foreground cursor-not-allowed'
